@@ -62,6 +62,10 @@
 #include "c150dgmsocket.h"
 #include "c150debug.h"
 #include <fstream>
+#include <dirent.h>
+#include <openssl/sha.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 using namespace std;          // for C++ std library
 using namespace C150NETWORK;  // for all the comp150 utilities 
@@ -69,7 +73,8 @@ using namespace C150NETWORK;  // for all the comp150 utilities
 // forward declarations
 void checkAndPrintMessage(ssize_t readlen, char *buf, ssize_t bufferlen);
 void setUpDebugLogging(const char *logname, int argc, char *argv[]);
-
+void checkDirectory(char *dirname);
+void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock);
 
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -90,7 +95,8 @@ void setUpDebugLogging(const char *logname, int argc, char *argv[]);
 //                           main program
 //
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
- 
+  const string SUCCESS = "success";
+  const string FAILURE = "failure";
 int 
 main(int argc, char *argv[]) {
 
@@ -98,7 +104,7 @@ main(int argc, char *argv[]) {
     // Variable declarations
     //
     ssize_t readlen;              // amount of data read from socket
-    char incomingMessage[100];   // received message data
+    char serverHashCode[100];   // received message data
 
     //
     //  Set up debug message logging
@@ -117,7 +123,14 @@ main(int argc, char *argv[]) {
     // int networkNastiness = atoi(argv[2]);
     // int filenastiness = atoi(argv[3]);
     string srcdir = argv[4];
-
+    DIR* SOURCE;
+    struct dirent *sourceFile; 
+    string clientHashTEST;
+    string clientHashVal = "";
+    unsigned char obuf[20];
+    ifstream *t;
+    stringstream *buffer;
+    char hashVal[20];
     //
     //
     //        Send / receive / print 
@@ -133,27 +146,99 @@ main(int argc, char *argv[]) {
         sock->turnOnTimeouts(3000);
 
         /// assume file copying is done here 
+        /*
+        1. get a file and hash it. 
+        */
+        checkDirectory((char*)srcdir.c_str());
+        SOURCE = opendir(srcdir.c_str());
+       if (SOURCE == NULL) {
+            fprintf(stderr,"Error opening target directory %s \n", srcdir.c_str());     
+            exit(8);
+        }
 
-        // // Send the message to the server
+       int testCounter = 0;
+        string path;
+        while ((sourceFile = readdir(SOURCE)) != NULL and testCounter < 1) {
+            clientHashVal = "";
+            // skip the . and .. names
+            if ((strcmp(sourceFile->d_name, ".") == 0) ||
+            (strcmp(sourceFile->d_name, "..")  == 0 )) 
+            continue;          // never copy . or ..
+                //argv[j] needs to be a path
+                path = srcdir + "/" + sourceFile->d_name;
+                t = new ifstream(srcdir + "/" + "romeo1" );
+                buffer = new stringstream;
+                *buffer << t->rdbuf();
+                SHA1((const unsigned char *)buffer->str().c_str(), (buffer->str()).length(), obuf);
+                cout << "current file being hashed on client-side: " << string(sourceFile->d_name) << endl;
+                for (int i = 0; i < 20; i++)
+                {
+                    sprintf(hashVal,"%02x",(unsigned int) obuf[i]);
+                    string stringHashVal(hashVal);
+                    clientHashVal += stringHashVal;
+                }
+                clientHashTEST = clientHashVal;
+
+                // 2.
+                //send the file to the server, wait for its response of the hash code of the file that it just read.
+                // perform a comparison between the hash code you currently have in this iteration and what is sent
+                // back to you  
+
+                // if it is not the same, you need to resend the file and repeat this process of #2
+                delete t;
+                delete buffer;
+                testCounter++;
+        }
+        closedir(SOURCE);
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+  
         string randomMessage = "random Message";
         const char * randomMessageArr = randomMessage.c_str();
         c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", argv[0], randomMessageArr);
         sock -> write(randomMessageArr, strlen(randomMessageArr)+1); // +1 includes the null
 
-        // Read the response from the server
         c150debug->printf(C150APPLICATION,"%s: reading server response:",
                           argv[0]);
+        // read hash code from server
+        bool isConfirmReceived = false;
+        while(!isConfirmReceived) {
+            // if hash code from server does not arrive, then skip this iteration of the while loop
+            readlen = sock -> read(serverHashCode, sizeof(serverHashCode));
+            if(readlen == 0 or sock -> timedout()) {
+                continue;
+            }
 
-        readlen = sock -> read(incomingMessage, sizeof(incomingMessage));
-        while(!sock -> timedout()) {
-            checkAndPrintMessage(readlen, incomingMessage, sizeof(incomingMessage));
-            readlen = sock -> read(incomingMessage, sizeof(incomingMessage));
+            checkAndPrintMessage(readlen, serverHashCode, sizeof(serverHashCode));
+
+            compareHashCodes(clientHashTEST, serverHashCode, sock);
+
+            // reads sent from server
+            char serverConfirmation[512];
+            int numRetries = 0;
+            while(1) {
+                readlen = sock -> read(serverConfirmation, sizeof(serverConfirmation));
+                if(sock -> timedout()) {
+                    numRetries++;
+                    cout << "sock timedout. retrying" << endl;
+                    compareHashCodes(clientHashTEST, serverHashCode, sock);
+                    continue;
+                }
+                if(readlen != 0) {
+                    isConfirmReceived = true;
+                    checkAndPrintMessage(readlen, serverConfirmation, sizeof(serverConfirmation));
+                    cout << "the client received the confirmation from the server" << endl;
+                    break;
+                }
+                if(numRetries == 5) {
+                    throw C150NetworkException("the network is down");
+                }
+                
+            }
+            //TESTING: assuming only one hash code gets sent back from the server
+            // hash code from server is contained in incoming message
         }
         // Check and print the incoming message
-     
-
     }
-
     //
     //  Handle networking errors -- for now, just print message and give up!
     //
@@ -179,7 +264,21 @@ main(int argc, char *argv[]) {
 //
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
  
-
+void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock) {
+    if(string(serverHashCode) == clientHashCode) {
+        cout << "hash values of the single file are the same" << endl;
+        cout << string(serverHashCode) << " == " << clientHashCode << endl;
+        // 3. send confirmation message to server. 
+        c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", "fileclient", SUCCESS.c_str());
+        sock -> write(SUCCESS.c_str(), SUCCESS.length()+1); // +1 includes the null
+    }
+    else {
+        cout << "hash values are not the same" << endl;
+        cout << string(serverHashCode) << " != " << clientHashCode << endl;
+        c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", "fileclient", FAILURE.c_str());
+        sock -> write(FAILURE.c_str(), strlen(FAILURE.c_str())+1); // +1 includes the null
+    }
+}
 
 void
 checkAndPrintMessage(ssize_t readlen, char *msg, ssize_t bufferlen) {
@@ -303,4 +402,18 @@ void setUpDebugLogging(const char *logname, int argc, char *argv[]) {
     //
     c150debug->enableLogging(C150APPLICATION | C150NETWORKTRAFFIC | 
                              C150NETWORKDELIVERY); 
+}
+
+void
+checkDirectory(char *dirname) {
+  struct stat statbuf;  
+  if (lstat(dirname, &statbuf) != 0) {
+    fprintf(stderr,"Error stating supplied source directory %s\n", dirname);
+    exit(8);
+  }
+
+  if (!S_ISDIR(statbuf.st_mode)) {
+    fprintf(stderr,"File %s exists but is not a directory\n", dirname);
+    exit(8);
+  }
 }
