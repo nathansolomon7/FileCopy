@@ -66,24 +66,26 @@ main(int argc, char *argv[])
     setUpDebugLogging("pingserverdebug.txt",argc, argv);
     c150debug->setIndent("    ");              // if we merge client and server
     ssize_t readlen;             // amount of data read from socket
-    char incomingMessage[512];
+    char fileMessage[512];
+    char statusMessage[512];
     try{
         
         c150debug->printf(C150APPLICATION,"Creating C150NastyDgmSocket(nastiness=%d)",  networkNastiness);
         C150DgmSocket *sock = new C150NastyDgmSocket(networkNastiness);
         bool isFileRecieved = false;
+        bool isStatusReceived = false;
         while(!isFileRecieved) {
-            readlen = sock -> read(incomingMessage, sizeof(incomingMessage)-1);
+            readlen = sock -> read(fileMessage, sizeof(fileMessage)-1);
             if (readlen == 0) {
                 c150debug->printf(C150APPLICATION,"Read zero length message, trying again");
                 continue;
             }
             // cout << "test 2" << endl;
-           incomingMessage[readlen] = '\0';  // make sure null terminated
-           string incoming(incomingMessage); // Convert to C++ string ...it's slightly
+           fileMessage[readlen] = '\0';  // make sure null terminated
+           string fileString(fileMessage); // Convert to C++ string ...it's slightly
 //                                               // easier to work with, and cleanString
            isFileRecieved = true;
-           cleanString(incoming);            // c150ids-supplied utility: changes
+           cleanString(fileString);            // c150ids-supplied utility: changes
 //                                               // non-printing characters to .
            cout << "a file has just been recieved" << endl;
 
@@ -103,7 +105,15 @@ main(int argc, char *argv[])
         //    copyfile takes name of target file
         //
         string path;
-        while ((targetFile = readdir(TARGET)) != NULL) {
+        int testCounter = 0;
+        while ((targetFile = readdir(TARGET)) != NULL and testCounter < 1) {
+
+            // before each file hashing, the server needs to be constantly listening for anything.
+            // The server should hash the file it just received if the message is a file
+            // Or, the server should send back a confirmation of receiving a status message if 
+            // it receives a status update (SUCCESS OR FAILURE
+            
+
             builtHashVal = "";
             // skip the . and .. names
             if ((strcmp(targetFile->d_name, ".") == 0) ||
@@ -115,6 +125,7 @@ main(int argc, char *argv[])
                 buffer = new stringstream;
                 *buffer << t->rdbuf();
                 SHA1((const unsigned char *)buffer->str().c_str(), (buffer->str()).length(), obuf);
+                cout << "current file being hashed on server-side: " << string(targetFile->d_name) << endl;
                 for (int i = 0; i < 20; i++)
                 {
                     sprintf(hashVal,"%02x",(unsigned int) obuf[i]);
@@ -124,11 +135,29 @@ main(int argc, char *argv[])
                  const char* builtHashValArr = builtHashVal.c_str();
 
                 c150debug->printf(C150APPLICATION,"Responding with message=\"%s\"", builtHashValArr);
-
-                sock -> write(builtHashValArr, builtHashVal.length() + 1);
                 //send builtHashVal
+                sock -> write(builtHashValArr, builtHashVal.length() + 1);
+                //wait for status response from client
+                while(!isStatusReceived) {
+                    readlen = sock -> read(statusMessage, sizeof(statusMessage)-1);
+                    if (readlen == 0) {
+                        c150debug->printf(C150APPLICATION,"Read zero length message, trying again");
+                        continue;
+                    }
+
+                    statusMessage[readlen] = '\0';  // make sure null terminated
+                    string statusString(statusMessage); // Convert to C++ string ...it's slightly
+                                                        // easier to work with, and cleanString
+                    isStatusReceived = true;
+                    cleanString(statusString);   
+                    // send confirmation of receiving status to client 
+                    sock -> write(statusString.c_str(), statusString.length() + 1);     
+
+                 }
+
                 delete t;
                 delete buffer;
+                testCounter++;
         }
         closedir(TARGET);
     } 
