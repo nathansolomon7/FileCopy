@@ -12,6 +12,7 @@ using namespace C150NETWORK;  // for all the comp150 utilities
 
 void setUpDebugLogging(const char *logname, int argc, char *argv[]);
 void checkDirectory(char *dirname);
+void createHashCode( struct dirent * targetFile, string path, C150DgmSocket *sock, string targetDirectory);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 //
@@ -32,11 +33,8 @@ main(int argc, char *argv[])
     string targetDirectory;
     DIR *TARGET;                // Unix descriptor for target
     struct dirent *targetFile;  // Directory entry for source file
-    char hashVal[20];
 	string builtHashVal = "";
-    ifstream *t;
-    stringstream *buffer;
-    unsigned char obuf[20];
+
 
    
     //
@@ -97,13 +95,9 @@ main(int argc, char *argv[])
              // skip the . and .. names
             if ((strcmp(targetFile->d_name, ".") == 0) ||
             (strcmp(targetFile->d_name, "..")  == 0 )) {
-                  cout << "is a . or .. . Skipping this file" << endl;
+                //   cout << "is a . or .. . Skipping this file" << endl;
                   continue;          // never copy . or ..
                 //argv[j] needs to be a path
-            }
-            else {
-                 cout << "targetFile->d_name: " << string(targetFile->d_name) << endl;
-                //  cout << "contains a . or .. . Skipping this file" << endl;
             }
 
             bool isFileRecieved = false;
@@ -114,37 +108,28 @@ main(int argc, char *argv[])
                     c150debug->printf(C150APPLICATION,"Read zero length message, trying again");
                     continue;
                 }
-                fileMessage[readlen] = '\0';  // make sure null terminated
-                string fileString(fileMessage); // Convert to C++ string ...it's slightly
-                                                    // easier to work with, and cleanString
+                // fileMessage[readlen] = '\0';  // make sure null terminated
+                // string fileString(fileMessage); // Convert to C++ string ...it's slightly
+                //                                     // easier to work with, and cleanString
+                /*
+                plan for how to resolve packets dropping the " a file has just been received message":
+                make sure that the incoming message being read is not a success or failure message.
+                If it is, then tell the client to resend the file
+                */
+               
                 isFileRecieved = true;
-                cleanString(fileString);            // c150ids-supplied utility: changes
-                                                    // non-printing characters to .
+                // cleanString(fileString);            // c150ids-supplied utility: changes
+                //                                     // non-printing characters to .
                 cout << "message received from client" << endl;
                 // for week 1, just compare "fileString", which is actually a hash code, 
                 // with itself which may or may not be wrong 
             }
 
-                builtHashVal = "";
-                path = targetDirectory + "/" + targetFile->d_name;
-                t = new ifstream(path);
-                buffer = new stringstream;
-                *buffer << t->rdbuf();
-                SHA1((const unsigned char *)buffer->str().c_str(), (buffer->str()).length(), obuf);
-                cout << "current file being hashed on server-side: " << string(targetFile->d_name) << endl;
-                for (int i = 0; i < 20; i++)
-                {
-                    sprintf(hashVal,"%02x",(unsigned int) obuf[i]);
-                    string stringHashVal(hashVal);
-                    builtHashVal += stringHashVal;
-                }
-                 const char* builtHashValArr = builtHashVal.c_str();
-
-                c150debug->printf(C150APPLICATION,"Responding with message=\"%s\"", builtHashValArr);
-                //send builtHashVal
-                sock -> write(builtHashValArr, builtHashVal.length() + 1);
+                 createHashCode(targetFile, path, sock, targetDirectory);
                 //wait for status response from client
                 while(!isStatusReceived) {
+                    // if you get "a file has been received from the server" message, go back to the top
+                    // of this loop 
                     readlen = sock -> read(statusMessage, sizeof(statusMessage)-1);
                     if (readlen == 0) {
                         c150debug->printf(C150APPLICATION,"Read zero length message, trying again");
@@ -154,15 +139,18 @@ main(int argc, char *argv[])
                     statusMessage[readlen] = '\0';  // make sure null terminated
                     string statusString(statusMessage); // Convert to C++ string ...it's slightly
                                                         // easier to work with, and cleanString
-                    isStatusReceived = true;
-                    cleanString(statusString);   
-                    // send confirmation of receiving status to client 
-                    sock -> write(statusString.c_str(), statusString.length() + 1);     
+                    cleanString(statusString);
 
+                    if(statusString != "success" and statusString != "failure") {
+                        createHashCode(targetFile, path, sock, targetDirectory);
+                    }
+                   else {
+                         isStatusReceived = true;
+                        // send confirmation of receiving status to client 
+                        string serverConfirmationMsg = "server confirmed " + statusString;
+                        sock -> write(serverConfirmationMsg.c_str(), serverConfirmationMsg.length() + 1); 
+                   }  
                  }
-
-                delete t;
-                delete buffer;
         }
         closedir(TARGET);
     } 
@@ -191,6 +179,33 @@ checkDirectory(char *dirname) {
     fprintf(stderr,"File %s exists but is not a directory\n", dirname);
     exit(8);
   }
+}
+
+void createHashCode( struct dirent * targetFile, string path, C150DgmSocket *sock, string targetDirectory) {
+    char hashVal[20];
+    unsigned char obuf[20];
+    ifstream *t;
+    stringstream *buffer;
+    string builtHashVal = "";
+    path = targetDirectory + "/" + targetFile->d_name;
+    t = new ifstream(path);
+    buffer = new stringstream;
+    *buffer << t->rdbuf();
+    SHA1((const unsigned char *)buffer->str().c_str(), (buffer->str()).length(), obuf);
+    cout << "current file being hashed on server-side: " << string(targetFile->d_name) << endl;
+    for (int i = 0; i < 20; i++)
+    {
+        sprintf(hashVal,"%02x",(unsigned int) obuf[i]);
+        string stringHashVal(hashVal);
+        builtHashVal += stringHashVal;
+    }
+        const char* builtHashValArr = builtHashVal.c_str();
+
+    c150debug->printf(C150APPLICATION,"Responding with message=\"%s\"", builtHashValArr);
+    //send builtHashVal
+    sock -> write(builtHashValArr, builtHashVal.length() + 1);
+    delete t;
+    delete buffer;
 }
 //////////////////////////////////////////////////////////////////
      
