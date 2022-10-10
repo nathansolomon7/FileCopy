@@ -1,12 +1,15 @@
-10/09/2022 16:54:09.664497 ./fileclient: Creating C150DgmSocket
-10/09/2022 16:54:09.668557 ./fileclient: ./fileclient: Writing message: "random Message"
-10/09/2022 16:54:09.668581 ./fileclient: C150DgmSocket::write: attempting to send packet with len=15 |random Message.|
-10/09/2022 16:54:09.668621 ./fileclient: C150DgmSocket::write: Success writing packet with len=15 |random Message.|
-10/09/2022 16:54:09.668639 ./fileclient: ./fileclient: reading server response:
-10/09/2022 16:54:09.670512 ./fileclient: C150DgmSocket::read: successful read with len=41 |cc0d8bcdd8d1b1956d128a8cf80dc01c3f0d2b49.|
-10/09/2022 16:54:09.670532 ./fileclient: PRINTING RESPONSE: Response received is "cc0d8bcdd8d1b1956d128a8cf80dc01c3f0d2b49"
-
-10/09/2022 16:54:09.671058 ./fileclient: fileclient: Writing message: "success"
-10/09/2022 16:54:09.671115 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |success.|
-10/09/2022 16:54:09.671193 ./fileclient: Caught C150NetworkException: C150NetworkException:  C150DgmSocket::write: error on sendto. Error string="Invalid argument"
-
+10/09/2022 20:24:11.009809 ./fileclient: Creating C150DgmSocket
+10/09/2022 20:24:11.017654 ./fileclient: ./fileclient: Writing message: "A file has just been sent to the server"
+10/09/2022 20:24:11.017680 ./fileclient: C150DgmSocket::write: attempting to send packet with len=40 |A file has just been sent to the server.|
+10/09/2022 20:24:11.017734 ./fileclient: C150DgmSocket::write: Success writing packet with len=40 |A file has just been sent to the server.|
+10/09/2022 20:24:11.017752 ./fileclient: ./fileclient: reading server response:
+10/09/2022 20:24:14.051201 ./fileclient: C150DgmSocket::read: returning timeout to application
+10/09/2022 20:24:17.059184 ./fileclient: C150DgmSocket::read: returning timeout to application
+10/09/2022 20:24:20.067197 ./fileclient: C150DgmSocket::read: returning timeout to application
+10/09/2022 20:24:23.075168 ./fileclient: C150DgmSocket::read: returning timeout to application
+10/09/2022 20:24:26.083377 ./fileclient: C150DgmSocket::read: returning timeout to application
+10/09/2022 20:24:29.091179 ./fileclient: C150DgmSocket::read: returning timeout to application
+10/09/2022 20:24:32.099150 ./fileclient: C150DgmSocket::read: returning timeout to application
+10/09/2022 20:24:35.107164 ./fileclient: C150DgmSocket::read: returning timeout to application
+10/09/2022 20:24:38.115154 ./fileclient: C150DgmSocket::read: returning timeout to application
+10/09/2022 20:24:41.123232 ./fileclient: C150DgmSocket::read: returning timeout to application

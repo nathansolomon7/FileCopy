@@ -70,26 +70,6 @@ main(int argc, char *argv[])
     char statusMessage[512];
     try{
         
-        c150debug->printf(C150APPLICATION,"Creating C150NastyDgmSocket(nastiness=%d)",  networkNastiness);
-        C150DgmSocket *sock = new C150NastyDgmSocket(networkNastiness);
-        bool isFileRecieved = false;
-        bool isStatusReceived = false;
-        while(!isFileRecieved) {
-            readlen = sock -> read(fileMessage, sizeof(fileMessage)-1);
-            if (readlen == 0) {
-                c150debug->printf(C150APPLICATION,"Read zero length message, trying again");
-                continue;
-            }
-            // cout << "test 2" << endl;
-           fileMessage[readlen] = '\0';  // make sure null terminated
-           string fileString(fileMessage); // Convert to C++ string ...it's slightly
-//                                               // easier to work with, and cleanString
-           isFileRecieved = true;
-           cleanString(fileString);            // c150ids-supplied utility: changes
-//                                               // non-printing characters to .
-           cout << "a file has just been recieved" << endl;
-
-        }
 
         checkDirectory((char*)targetDirectory.c_str());
         TARGET = opendir(argv[3]);
@@ -105,21 +85,47 @@ main(int argc, char *argv[])
         //    copyfile takes name of target file
         //
         string path;
-        int testCounter = 0;
-        while ((targetFile = readdir(TARGET)) != NULL and testCounter < 1) {
-
+        // int testCounter = 0;
+          c150debug->printf(C150APPLICATION,"Creating C150NastyDgmSocket(nastiness=%d)",  networkNastiness);
+            C150DgmSocket *sock = new C150NastyDgmSocket(networkNastiness);
+        while ((targetFile = readdir(TARGET)) != NULL) {
+            //2.
             // before each file hashing, the server needs to be constantly listening for anything.
             // The server should hash the file it just received if the message is a file
             // Or, the server should send back a confirmation of receiving a status message if 
             // it receives a status update (SUCCESS OR FAILURE
-            
-
-            builtHashVal = "";
-            // skip the . and .. names
+             // skip the . and .. names
             if ((strcmp(targetFile->d_name, ".") == 0) ||
-            (strcmp(targetFile->d_name, "..")  == 0 )) 
-            continue;          // never copy . or ..
+            (strcmp(targetFile->d_name, "..")  == 0 )) {
+                  cout << "is a . or .. . Skipping this file" << endl;
+                  continue;          // never copy . or ..
                 //argv[j] needs to be a path
+            }
+            else {
+                 cout << "targetFile->d_name: " << string(targetFile->d_name) << endl;
+                //  cout << "contains a . or .. . Skipping this file" << endl;
+            }
+
+            bool isFileRecieved = false;
+            bool isStatusReceived = false;
+            while(!isFileRecieved) {
+                readlen = sock -> read(fileMessage, sizeof(fileMessage)-1);
+                if (readlen == 0) {
+                    c150debug->printf(C150APPLICATION,"Read zero length message, trying again");
+                    continue;
+                }
+                fileMessage[readlen] = '\0';  // make sure null terminated
+                string fileString(fileMessage); // Convert to C++ string ...it's slightly
+                                                    // easier to work with, and cleanString
+                isFileRecieved = true;
+                cleanString(fileString);            // c150ids-supplied utility: changes
+                                                    // non-printing characters to .
+                cout << "message received from client" << endl;
+                // for week 1, just compare "fileString", which is actually a hash code, 
+                // with itself which may or may not be wrong 
+            }
+
+                builtHashVal = "";
                 path = targetDirectory + "/" + targetFile->d_name;
                 t = new ifstream(path);
                 buffer = new stringstream;
@@ -157,7 +163,6 @@ main(int argc, char *argv[])
 
                 delete t;
                 delete buffer;
-                testCounter++;
         }
         closedir(TARGET);
     } 

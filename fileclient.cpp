@@ -125,7 +125,6 @@ main(int argc, char *argv[]) {
     string srcdir = argv[4];
     DIR* SOURCE;
     struct dirent *sourceFile; 
-    string clientHashTEST;
     string clientHashVal = "";
     unsigned char obuf[20];
     ifstream *t;
@@ -156,61 +155,50 @@ main(int argc, char *argv[]) {
             exit(8);
         }
 
-       int testCounter = 0;
+    
         string path;
-        while ((sourceFile = readdir(SOURCE)) != NULL and testCounter < 1) {
+        while ((sourceFile = readdir(SOURCE)) != NULL) {
             clientHashVal = "";
             // skip the . and .. names
-            if ((strcmp(sourceFile->d_name, ".") == 0) ||
-            (strcmp(sourceFile->d_name, "..")  == 0 )) 
-            continue;          // never copy . or ..
-                //argv[j] needs to be a path
-                path = srcdir + "/" + sourceFile->d_name;
-                t = new ifstream(srcdir + "/" + "romeo1" );
-                buffer = new stringstream;
-                *buffer << t->rdbuf();
-                SHA1((const unsigned char *)buffer->str().c_str(), (buffer->str()).length(), obuf);
-                cout << "current file being hashed on client-side: " << string(sourceFile->d_name) << endl;
-                for (int i = 0; i < 20; i++)
-                {
-                    sprintf(hashVal,"%02x",(unsigned int) obuf[i]);
-                    string stringHashVal(hashVal);
-                    clientHashVal += stringHashVal;
-                }
-                clientHashTEST = clientHashVal;
+            if ((strcmp(sourceFile->d_name, ".") == 0) || (strcmp(sourceFile->d_name, "..")  == 0 )) {
+                 continue;  
+            }
 
-                // 2.
-                //send the file to the server, wait for its response of the hash code of the file that it just read.
-                // perform a comparison between the hash code you currently have in this iteration and what is sent
-                // back to you  
+            path = srcdir + "/" + sourceFile->d_name;
+            t = new ifstream(path);
+            buffer = new stringstream;
+            *buffer << t->rdbuf();
+            SHA1((const unsigned char *)buffer->str().c_str(), (buffer->str()).length(), obuf);
+            cout << "current file being hashed on client-side: " << string(sourceFile->d_name) << endl;
+            for (int i = 0; i < 20; i++)
+            {
+                sprintf(hashVal,"%02x",(unsigned int) obuf[i]);
+                string stringHashVal(hashVal);
+                clientHashVal += stringHashVal;
+            }
 
-                // if it is not the same, you need to resend the file and repeat this process of #2
-                delete t;
-                delete buffer;
-                testCounter++;
-        }
-        closedir(SOURCE);
-        //////////////////////////////////////////////////////////////////////////////////////////////////
-  
-        string randomMessage = "random Message";
-        const char * randomMessageArr = randomMessage.c_str();
-        c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", argv[0], randomMessageArr);
-        sock -> write(randomMessageArr, strlen(randomMessageArr)+1); // +1 includes the null
-
-        c150debug->printf(C150APPLICATION,"%s: reading server response:",
-                          argv[0]);
-        // read hash code from server
-        bool isConfirmReceived = false;
-        while(!isConfirmReceived) {
-            // if hash code from server does not arrive, then skip this iteration of the while loop
-            readlen = sock -> read(serverHashCode, sizeof(serverHashCode));
-            if(readlen == 0 or sock -> timedout()) {
+            // 2.
+            //send the file to the server, wait for its response of the hash code of the file that it just read.
+            // perform a comparison between the hash code you currently have in this iteration and what is sent
+            // back to you  
+            string fakeFileSend = "A file has just been sent to the server";
+            // const char* fakeFileSendArr = fakeFileSend.c_str();
+            c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", argv[0], fakeFileSend.c_str());
+            sock -> write( fakeFileSend.c_str(), strlen(fakeFileSend.c_str())+1); // +1 includes the null
+            // if it is not the same, you need to resend the file and repeat this process of #2
+            c150debug->printf(C150APPLICATION,"%s: reading server response:", argv[0]);
+            // read hash code from server
+            bool isConfirmReceived = false;
+            while(!isConfirmReceived) {
+                // if hash code from server does not arrive, then skip this iteration of the while loop
+                 readlen = sock -> read(serverHashCode, sizeof(serverHashCode));
+                if(readlen == 0 or sock -> timedout()) {
                 continue;
             }
 
             checkAndPrintMessage(readlen, serverHashCode, sizeof(serverHashCode));
 
-            compareHashCodes(clientHashTEST, serverHashCode, sock);
+            compareHashCodes(clientHashVal, serverHashCode, sock);
 
             // reads sent from server
             char serverConfirmation[512];
@@ -220,7 +208,7 @@ main(int argc, char *argv[]) {
                 if(sock -> timedout()) {
                     numRetries++;
                     cout << "sock timedout. retrying" << endl;
-                    compareHashCodes(clientHashTEST, serverHashCode, sock);
+                    compareHashCodes(clientHashVal, serverHashCode, sock);
                     continue;
                 }
                 if(readlen != 0) {
@@ -237,6 +225,12 @@ main(int argc, char *argv[]) {
             //TESTING: assuming only one hash code gets sent back from the server
             // hash code from server is contained in incoming message
         }
+                delete t;
+                delete buffer;
+        }
+        closedir(SOURCE);
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+
         // Check and print the incoming message
     }
     //
