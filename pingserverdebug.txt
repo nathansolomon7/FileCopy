@@ -1,0 +1,3 @@
+10/09/2022 20:24:07.611802 ./fileserver:     Creating C150NastyDgmSocket(nastiness=0)
+10/09/2022 20:24:11.017679 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
+10/09/2022 20:24:11.017703 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
