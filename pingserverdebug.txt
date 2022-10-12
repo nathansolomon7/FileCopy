@@ -1,115 +1,108 @@
-10/10/2022 15:29:06.804074 ./fileserver:     Creating C150NastyDgmSocket(nastiness=3)
-10/10/2022 15:29:13.335623 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
-10/10/2022 15:29:13.335648 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
-10/10/2022 15:29:13.336921 ./fileserver:     Responding with message="b9d614873a0e997e6d9187db8e653446f84c8ee7"
-10/10/2022 15:29:13.336945 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |b9d614873a0e997e6d9187db8e653446f84c8ee7.|
-10/10/2022 15:29:13.336991 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |b9d614873a0e997e6d9187db8e653446f84c8ee7.|
-10/10/2022 15:29:13.337189 ./fileserver:     C150DgmSocket::read: successful read with len=8 |success.|
-10/10/2022 15:29:13.337208 ./fileserver:     C150NastyDgmSocket::read: DELAYING packet of length 8 |success.|
-10/10/2022 15:29:16.387498 ./fileserver:     C150DgmSocket::read: successful read with len=8 |success.|
-10/10/2022 15:29:16.387525 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |success.|
-10/10/2022 15:29:16.387565 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=8 |success.|
-10/10/2022 15:29:16.387636 ./fileserver:     C150DgmSocket::write: Success writing packet with len=8 |success.|
-10/10/2022 15:29:16.388511 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
-10/10/2022 15:29:16.388532 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
-10/10/2022 15:29:16.389015 ./fileserver:     Responding with message="ed1a853a3bd73c52d49809d78798c01528288a27"
-10/10/2022 15:29:16.389037 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |ed1a853a3bd73c52d49809d78798c01528288a27.|
-10/10/2022 15:29:16.389071 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |ed1a853a3bd73c52d49809d78798c01528288a27.|
-10/10/2022 15:29:16.389259 ./fileserver:     C150DgmSocket::read: successful read with len=8 |success.|
-10/10/2022 15:29:16.389279 ./fileserver:     C150NastyDgmSocket::read: DELAYING packet of length 8 |success.|
-10/10/2022 15:29:19.395424 ./fileserver:     C150DgmSocket::read: successful read with len=8 |success.|
-10/10/2022 15:29:19.395447 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |success.|
-10/10/2022 15:29:19.395483 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=8 |success.|
-10/10/2022 15:29:19.395561 ./fileserver:     C150DgmSocket::write: Success writing packet with len=8 |success.|
-10/10/2022 15:29:19.395586 ./fileserver:     C150NastyDgmSocket::read: delivering delayed packet. readlen=8 |success.|
-10/10/2022 15:29:19.411913 ./fileserver:     Responding with message="509c3bbba070aee5a6c24f75b0a22bb1b5924de9"
-10/10/2022 15:29:19.411939 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |509c3bbba070aee5a6c24f75b0a22bb1b5924de9.|
-10/10/2022 15:29:19.411987 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |509c3bbba070aee5a6c24f75b0a22bb1b5924de9.|
-10/10/2022 15:29:19.412192 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.412212 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.426396 ./fileserver:     Responding with message="509c3bbba070aee5a6c24f75b0a22bb1b5924de9"
-10/10/2022 15:29:19.426422 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |509c3bbba070aee5a6c24f75b0a22bb1b5924de9.|
-10/10/2022 15:29:19.426475 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |509c3bbba070aee5a6c24f75b0a22bb1b5924de9.|
-10/10/2022 15:29:19.426856 ./fileserver:     C150NastyDgmSocket::read: delivering delayed packet. readlen=8 |success.|
-10/10/2022 15:29:19.426886 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=8 |success.|
-10/10/2022 15:29:19.426917 ./fileserver:     C150DgmSocket::write: Success writing packet with len=8 |success.|
-10/10/2022 15:29:19.426942 ./fileserver:     C150DgmSocket::read: successful read with len=8 |success.|
-10/10/2022 15:29:19.426961 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |success.|
-10/10/2022 15:29:19.428823 ./fileserver:     Responding with message="2ae44fb0bc87b11d4dd709fabb01d41b4da3f1d8"
-10/10/2022 15:29:19.428844 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |2ae44fb0bc87b11d4dd709fabb01d41b4da3f1d8.|
-10/10/2022 15:29:19.428874 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |2ae44fb0bc87b11d4dd709fabb01d41b4da3f1d8.|
-10/10/2022 15:29:19.428941 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.428961 ./fileserver:     C150NastyDgmSocket::read: dropping packet of length 40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.429089 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
-10/10/2022 15:29:19.429108 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
-10/10/2022 15:29:19.429129 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/10/2022 15:29:19.429155 ./fileserver:     C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/10/2022 15:29:19.432661 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.432681 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.434971 ./fileserver:     Responding with message="f7b01477912929f4bafcb4fa55d1e2a3c78154fb"
-10/10/2022 15:29:19.434992 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |f7b01477912929f4bafcb4fa55d1e2a3c78154fb.|
-10/10/2022 15:29:19.435026 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |f7b01477912929f4bafcb4fa55d1e2a3c78154fb.|
-10/10/2022 15:29:19.435053 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
-10/10/2022 15:29:19.435072 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
-10/10/2022 15:29:19.435092 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/10/2022 15:29:19.435119 ./fileserver:     C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/10/2022 15:29:19.439905 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.439924 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.444228 ./fileserver:     Responding with message="e77ea6c165d950a8a12106e0d5c0cea731436b8f"
-10/10/2022 15:29:19.444251 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |e77ea6c165d950a8a12106e0d5c0cea731436b8f.|
-10/10/2022 15:29:19.444288 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |e77ea6c165d950a8a12106e0d5c0cea731436b8f.|
-10/10/2022 15:29:19.444315 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
-10/10/2022 15:29:19.444334 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
-10/10/2022 15:29:19.444354 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/10/2022 15:29:19.444381 ./fileserver:     C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/10/2022 15:29:19.446565 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.446585 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.450323 ./fileserver:     Responding with message="8d55d5b9ea5f4c2b2aef5bad91732c427c5a35cd"
-10/10/2022 15:29:19.450344 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |8d55d5b9ea5f4c2b2aef5bad91732c427c5a35cd.|
-10/10/2022 15:29:19.450374 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |8d55d5b9ea5f4c2b2aef5bad91732c427c5a35cd.|
-10/10/2022 15:29:19.450399 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
-10/10/2022 15:29:19.450418 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
-10/10/2022 15:29:19.450438 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/10/2022 15:29:19.450463 ./fileserver:     C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/10/2022 15:29:19.451854 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.451874 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.454452 ./fileserver:     Responding with message="22b123ed27c0214d4b6b4890c9e296f8036c0797"
-10/10/2022 15:29:19.454478 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
-10/10/2022 15:29:19.454508 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
-10/10/2022 15:29:19.454533 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
-10/10/2022 15:29:19.454551 ./fileserver:     C150NastyDgmSocket::read: DELAYING packet of length 8 |failure.|
-10/10/2022 15:29:19.457354 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.457373 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.459677 ./fileserver:     Responding with message="22b123ed27c0214d4b6b4890c9e296f8036c0797"
-10/10/2022 15:29:19.459697 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
-10/10/2022 15:29:19.459726 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
-10/10/2022 15:29:19.459916 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
-10/10/2022 15:29:19.459935 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
-10/10/2022 15:29:19.459955 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/10/2022 15:29:19.459981 ./fileserver:     C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/10/2022 15:29:19.462980 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
-10/10/2022 15:29:19.463000 ./fileserver:     C150NastyDgmSocket::read: DELAYING packet of length 40 |A file has just been sent to the server.|
-10/10/2022 15:29:34.499397 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
-10/10/2022 15:29:34.499421 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
-10/10/2022 15:29:34.501967 ./fileserver:     Responding with message="3e8908cd00421182f02169e752a3760bc4e26100"
-10/10/2022 15:29:34.501989 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |3e8908cd00421182f02169e752a3760bc4e26100.|
-10/10/2022 15:29:34.502030 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |3e8908cd00421182f02169e752a3760bc4e26100.|
-10/10/2022 15:29:34.502061 ./fileserver:     C150NastyDgmSocket::read: delivering delayed packet. readlen=40 |A file has just been sent to the server.|
-10/10/2022 15:29:34.506008 ./fileserver:     Responding with message="3e8908cd00421182f02169e752a3760bc4e26100"
-10/10/2022 15:29:34.506040 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |3e8908cd00421182f02169e752a3760bc4e26100.|
-10/10/2022 15:29:34.506071 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |3e8908cd00421182f02169e752a3760bc4e26100.|
-10/10/2022 15:29:34.506099 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
-10/10/2022 15:29:34.506118 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
-10/10/2022 15:29:34.506138 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/10/2022 15:29:34.506163 ./fileserver:     C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/10/2022 15:29:34.506184 ./fileserver:     C150NastyDgmSocket::read: delivering delayed packet. readlen=8 |failure.|
-10/10/2022 15:29:34.507274 ./fileserver:     Responding with message="d305a2073980306d8a4a889dd28cc645c55bcd12"
-10/10/2022 15:29:34.507295 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |d305a2073980306d8a4a889dd28cc645c55bcd12.|
-10/10/2022 15:29:34.507327 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |d305a2073980306d8a4a889dd28cc645c55bcd12.|
-10/10/2022 15:29:34.507420 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
-10/10/2022 15:29:34.507440 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
-10/10/2022 15:29:34.509334 ./fileserver:     Responding with message="d305a2073980306d8a4a889dd28cc645c55bcd12"
-10/10/2022 15:29:34.509355 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |d305a2073980306d8a4a889dd28cc645c55bcd12.|
-10/10/2022 15:29:34.509385 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |d305a2073980306d8a4a889dd28cc645c55bcd12.|
-10/10/2022 15:29:34.509411 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
-10/10/2022 15:29:34.509430 ./fileserver:     C150NastyDgmSocket::read: dropping packet of length 8 |failure.|
+10/11/2022 14:26:14.537750 ./fileserver:     Creating C150NastyDgmSocket(nastiness=2)
+10/11/2022 14:26:19.204101 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
+10/11/2022 14:26:19.204125 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
+10/11/2022 14:26:19.205736 ./fileserver:     Responding with message="b9d614873a0e997e6d9187db8e653446f84c8ee7"
+10/11/2022 14:26:19.205760 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |b9d614873a0e997e6d9187db8e653446f84c8ee7.|
+10/11/2022 14:26:19.205823 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |b9d614873a0e997e6d9187db8e653446f84c8ee7.|
+10/11/2022 14:26:19.206045 ./fileserver:     C150DgmSocket::read: successful read with len=8 |success.|
+10/11/2022 14:26:19.206065 ./fileserver:     C150NastyDgmSocket::read: DELAYING packet of length 8 |success.|
+10/11/2022 14:26:22.243666 ./fileserver:     C150DgmSocket::read: successful read with len=8 |success.|
+10/11/2022 14:26:22.243688 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |success.|
+10/11/2022 14:26:22.243732 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=25 |server confirmed success.|
+10/11/2022 14:26:22.243808 ./fileserver:     C150DgmSocket::write: Success writing packet with len=25 |server confirmed success.|
+10/11/2022 14:26:22.243831 ./fileserver:     C150NastyDgmSocket::read: delivering delayed packet. readlen=8 |success.|
+10/11/2022 14:26:22.244293 ./fileserver:     Responding with message="ed1a853a3bd73c52d49809d78798c01528288a27"
+10/11/2022 14:26:22.244313 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |ed1a853a3bd73c52d49809d78798c01528288a27.|
+10/11/2022 14:26:22.244350 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |ed1a853a3bd73c52d49809d78798c01528288a27.|
+10/11/2022 14:26:22.244464 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.244506 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.244861 ./fileserver:     Responding with message="ed1a853a3bd73c52d49809d78798c01528288a27"
+10/11/2022 14:26:22.244882 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |ed1a853a3bd73c52d49809d78798c01528288a27.|
+10/11/2022 14:26:22.244909 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |ed1a853a3bd73c52d49809d78798c01528288a27.|
+10/11/2022 14:26:22.244944 ./fileserver:     C150DgmSocket::read: successful read with len=8 |success.|
+10/11/2022 14:26:22.244964 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |success.|
+10/11/2022 14:26:22.244985 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=25 |server confirmed success.|
+10/11/2022 14:26:22.245017 ./fileserver:     C150DgmSocket::write: Success writing packet with len=25 |server confirmed success.|
+10/11/2022 14:26:22.257222 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.257242 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.269432 ./fileserver:     Responding with message="509c3bbba070aee5a6c24f75b0a22bb1b5924de9"
+10/11/2022 14:26:22.269457 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |509c3bbba070aee5a6c24f75b0a22bb1b5924de9.|
+10/11/2022 14:26:22.269519 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |509c3bbba070aee5a6c24f75b0a22bb1b5924de9.|
+10/11/2022 14:26:22.269637 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
+10/11/2022 14:26:22.269656 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
+10/11/2022 14:26:22.269678 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.269720 ./fileserver:     C150DgmSocket::write: Success writing packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.270211 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.270230 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.270637 ./fileserver:     Responding with message="2ae44fb0bc87b11d4dd709fabb01d41b4da3f1d8"
+10/11/2022 14:26:22.270658 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |2ae44fb0bc87b11d4dd709fabb01d41b4da3f1d8.|
+10/11/2022 14:26:22.270695 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |2ae44fb0bc87b11d4dd709fabb01d41b4da3f1d8.|
+10/11/2022 14:26:22.270722 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
+10/11/2022 14:26:22.270741 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
+10/11/2022 14:26:22.270762 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.270793 ./fileserver:     C150DgmSocket::write: Success writing packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.271421 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.271440 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.272032 ./fileserver:     Responding with message="f7b01477912929f4bafcb4fa55d1e2a3c78154fb"
+10/11/2022 14:26:22.272053 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |f7b01477912929f4bafcb4fa55d1e2a3c78154fb.|
+10/11/2022 14:26:22.272091 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |f7b01477912929f4bafcb4fa55d1e2a3c78154fb.|
+10/11/2022 14:26:22.272117 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
+10/11/2022 14:26:22.272135 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
+10/11/2022 14:26:22.272156 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.272186 ./fileserver:     C150DgmSocket::write: Success writing packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.274808 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.274827 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.277459 ./fileserver:     Responding with message="e77ea6c165d950a8a12106e0d5c0cea731436b8f"
+10/11/2022 14:26:22.277493 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |e77ea6c165d950a8a12106e0d5c0cea731436b8f.|
+10/11/2022 14:26:22.277537 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |e77ea6c165d950a8a12106e0d5c0cea731436b8f.|
+10/11/2022 14:26:22.277565 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
+10/11/2022 14:26:22.277584 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
+10/11/2022 14:26:22.277605 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.277638 ./fileserver:     C150DgmSocket::write: Success writing packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.278075 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.278094 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.278452 ./fileserver:     Responding with message="8d55d5b9ea5f4c2b2aef5bad91732c427c5a35cd"
+10/11/2022 14:26:22.278488 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |8d55d5b9ea5f4c2b2aef5bad91732c427c5a35cd.|
+10/11/2022 14:26:22.278524 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |8d55d5b9ea5f4c2b2aef5bad91732c427c5a35cd.|
+10/11/2022 14:26:22.278550 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
+10/11/2022 14:26:22.278568 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
+10/11/2022 14:26:22.278589 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.278621 ./fileserver:     C150DgmSocket::write: Success writing packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.279045 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.279064 ./fileserver:     C150NastyDgmSocket::read: DELAYING packet of length 40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.279193 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
+10/11/2022 14:26:22.279211 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
+10/11/2022 14:26:22.279679 ./fileserver:     Responding with message="22b123ed27c0214d4b6b4890c9e296f8036c0797"
+10/11/2022 14:26:22.279699 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
+10/11/2022 14:26:22.279735 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
+10/11/2022 14:26:22.279759 ./fileserver:     C150NastyDgmSocket::read: delivering delayed packet. readlen=40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.280095 ./fileserver:     Responding with message="22b123ed27c0214d4b6b4890c9e296f8036c0797"
+10/11/2022 14:26:22.280115 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
+10/11/2022 14:26:22.280147 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
+10/11/2022 14:26:22.280266 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.280286 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.280617 ./fileserver:     Responding with message="22b123ed27c0214d4b6b4890c9e296f8036c0797"
+10/11/2022 14:26:22.280637 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
+10/11/2022 14:26:22.280670 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
+10/11/2022 14:26:22.280694 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
+10/11/2022 14:26:22.280712 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
+10/11/2022 14:26:22.280733 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.280764 ./fileserver:     C150DgmSocket::write: Success writing packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.281176 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.281195 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.281545 ./fileserver:     Responding with message="3e8908cd00421182f02169e752a3760bc4e26100"
+10/11/2022 14:26:22.281566 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |3e8908cd00421182f02169e752a3760bc4e26100.|
+10/11/2022 14:26:22.281600 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |3e8908cd00421182f02169e752a3760bc4e26100.|
+10/11/2022 14:26:22.281629 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
+10/11/2022 14:26:22.281648 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
+10/11/2022 14:26:22.281668 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.281701 ./fileserver:     C150DgmSocket::write: Success writing packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.282108 ./fileserver:     C150DgmSocket::read: successful read with len=40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.282127 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 40 |A file has just been sent to the server.|
+10/11/2022 14:26:22.282453 ./fileserver:     Responding with message="d305a2073980306d8a4a889dd28cc645c55bcd12"
+10/11/2022 14:26:22.282480 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=41 |d305a2073980306d8a4a889dd28cc645c55bcd12.|
+10/11/2022 14:26:22.282512 ./fileserver:     C150DgmSocket::write: Success writing packet with len=41 |d305a2073980306d8a4a889dd28cc645c55bcd12.|
+10/11/2022 14:26:22.282536 ./fileserver:     C150DgmSocket::read: successful read with len=8 |failure.|
+10/11/2022 14:26:22.282554 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 8 |failure.|
+10/11/2022 14:26:22.282575 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=25 |server confirmed failure.|
+10/11/2022 14:26:22.282606 ./fileserver:     C150DgmSocket::write: Success writing packet with len=25 |server confirmed failure.|

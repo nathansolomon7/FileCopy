@@ -7,6 +7,7 @@
 #include <openssl/sha.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "c150grading.h"
 using namespace C150NETWORK;  // for all the comp150 utilities 
 
 
@@ -23,7 +24,7 @@ void createHashCode( struct dirent * targetFile, string path, C150DgmSocket *soc
 int
 main(int argc, char *argv[])
 {
-
+     GRADEME(argc, argv);
     //
     // Variable declarations
     //
@@ -116,7 +117,7 @@ main(int argc, char *argv[])
                 make sure that the incoming message being read is not a success or failure message.
                 If it is, then tell the client to resend the file
                 */
-               
+                // maybe cant set this to true in the event that we need to do a repeat hash?
                 isFileRecieved = true;
                 // cleanString(fileString);            // c150ids-supplied utility: changes
                 //                                     // non-printing characters to .
@@ -146,10 +147,16 @@ main(int argc, char *argv[])
                     }
                    else {
                          isStatusReceived = true;
+                         if(statusString == "success") {
+                             *GRADING << "File: " << targetFile->d_name << " end-to-end check succeeded" << endl;
+                         }
+                         else {
+                             *GRADING << "File: " << targetFile->d_name << " end-to-end check failed" << endl;
+                         }
                         // send confirmation of receiving status to client 
                         string serverConfirmationMsg = "server confirmed " + statusString;
                         sock -> write(serverConfirmationMsg.c_str(), serverConfirmationMsg.length() + 1); 
-                   }  
+                   }
                  }
         }
         closedir(TARGET);
