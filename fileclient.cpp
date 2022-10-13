@@ -194,7 +194,7 @@ main(int argc, char *argv[]) {
                 //send the file to the server, wait for its response of the hash code of the file that it just read.
                 // perform a comparison between the hash code you currently have in this iteration and what is sent
                 // back to you  
-                string fakeFileSend = "A file has just been sent to the server";
+                string fakeFileSend = string(sourceFile->d_name);
                 // const char* fakeFileSendArr = fakeFileSend.c_str();
                 c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", argv[0], fakeFileSend.c_str());
                 sock -> write( fakeFileSend.c_str(), strlen(fakeFileSend.c_str())+1); // +1 includes the null
@@ -217,12 +217,22 @@ main(int argc, char *argv[]) {
                         // doing a full file retry
                         continue;
                     }
+                    serverHashCode[readlen] = '\0';
+                    string serverHashCodeString(serverHashCode);
+                    cleanString(serverHashCodeString);
+                    cout << "length of " << serverHashCodeString << ": " << serverHashCodeString.length() << endl;
+                    
+                    if (serverHashCodeString.length() != 40) {
+                        isConfirmReceived = true;
+                        continue;
+                    }
                     // the server got the file and you received back a hash code, so do not retry sending 
                     // the file/initial message again
                     isFileSendRetry = false;
                     
                     checkAndPrintMessage(readlen, serverHashCode, sizeof(serverHashCode));
-
+                    // if the server hash val is not a hash code, go back to the top and resend "a file has 
+                    // been sent message"
                     compareHashCodes(clientHashVal, serverHashCode, sock, string(sourceFile->d_name), 1);
 
                     // reads sent from server
@@ -233,9 +243,11 @@ main(int argc, char *argv[]) {
                         if(sock -> timedout()) {
                             numRetries++;
                             cout << "sock timedout. retrying" << endl;
+                            // resend the hash code status
                             compareHashCodes(clientHashVal, serverHashCode, sock, string(sourceFile->d_name), 1);
                             continue;
                         }
+                        // if it does not time out
                         if(readlen != 0) {
                             isConfirmReceived = true;
                             checkAndPrintMessage(readlen, serverConfirmation, sizeof(serverConfirmation));
@@ -287,9 +299,6 @@ main(int argc, char *argv[]) {
  
 void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string currFile, int numRetry) {
     if(string(serverHashCode) == clientHashCode) {
-        // cout << "hash values of the single file are the same" << endl;
-        // cout << "currFile: " << currFile << endl;
-        // fileCheckResults << "true" << endl;
         cout << string(serverHashCode) << " == " << clientHashCode << endl;
         // 3. send confirmation message to server. 
         *GRADING << "File: " << currFile << " end-to-end check succeeded, attempt " << numRetry << endl;
@@ -297,9 +306,6 @@ void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket
         sock -> write(SUCCESS.c_str(), SUCCESS.length()+1); // +1 includes the null
     }
     else {
-        // cout << "hash values are not the same" << endl;
-        // cout << "currFile: " << currFile << endl;
-        // fileCheckResults << "false" << endl;
         cout << string(serverHashCode) << " != " << clientHashCode << endl;
         *GRADING << "File: " << currFile << " end-to-end check failed, attempt " << numRetry << endl;
         c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", "fileclient", FAILURE.c_str());

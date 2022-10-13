@@ -1,148 +1,148 @@
-10/11/2022 14:26:19.199910 ./fileclient: Creating C150DgmSocket
-10/11/2022 14:26:19.203639 ./fileclient: ./fileclient: Writing message: "A file has just been sent to the server"
-10/11/2022 14:26:19.203693 ./fileclient: C150DgmSocket::write: attempting to send packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:19.203754 ./fileclient: C150DgmSocket::write: Success writing packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:19.203772 ./fileclient: ./fileclient: reading server response:
-10/11/2022 14:26:19.205698 ./fileclient: C150DgmSocket::read: successful read with len=41 |b9d614873a0e997e6d9187db8e653446f84c8ee7.|
-10/11/2022 14:26:19.205717 ./fileclient: PRINTING RESPONSE: Response received is "b9d614873a0e997e6d9187db8e653446f84c8ee7"
+10/13/2022 10:52:04.623550 ./fileclient: Creating C150DgmSocket
+10/13/2022 10:52:04.630247 ./fileclient: ./fileclient: Writing message: "data1 has been sent to the server"
+10/13/2022 10:52:04.630271 ./fileclient: C150DgmSocket::write: attempting to send packet with len=34 |data1 has been sent to the server.|
+10/13/2022 10:52:04.630308 ./fileclient: C150DgmSocket::write: Success writing packet with len=34 |data1 has been sent to the server.|
+10/13/2022 10:52:04.630325 ./fileclient: ./fileclient: reading server response:
+10/13/2022 10:52:04.631395 ./fileclient: C150DgmSocket::read: successful read with len=41 |cc0d8bcdd8d1b1956d128a8cf80dc01c3f0d2b49.|
+10/13/2022 10:52:04.631414 ./fileclient: PRINTING RESPONSE: Response received is "cc0d8bcdd8d1b1956d128a8cf80dc01c3f0d2b49"
 
-10/11/2022 14:26:19.205752 ./fileclient: fileclient: Writing message: "success"
-10/11/2022 14:26:19.205782 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |success.|
-10/11/2022 14:26:19.205826 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |success.|
-10/11/2022 14:26:22.243168 ./fileclient: C150DgmSocket::read: returning timeout to application
-10/11/2022 14:26:22.243215 ./fileclient: fileclient: Writing message: "success"
-10/11/2022 14:26:22.243240 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |success.|
-10/11/2022 14:26:22.243312 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |success.|
-10/11/2022 14:26:22.243695 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed success.|
-10/11/2022 14:26:22.243713 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed success"
+10/13/2022 10:52:04.631445 ./fileclient: fileclient: Writing message: "success"
+10/13/2022 10:52:04.631464 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |success.|
+10/13/2022 10:52:04.631491 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |success.|
+10/13/2022 10:52:07.651166 ./fileclient: C150DgmSocket::read: returning timeout to application
+10/13/2022 10:52:07.651212 ./fileclient: fileclient: Writing message: "success"
+10/13/2022 10:52:07.651237 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |success.|
+10/13/2022 10:52:07.651291 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |success.|
+10/13/2022 10:52:07.651720 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed success.|
+10/13/2022 10:52:07.651739 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed success"
 
-10/11/2022 14:26:22.244212 ./fileclient: ./fileclient: Writing message: "A file has just been sent to the server"
-10/11/2022 14:26:22.244233 ./fileclient: C150DgmSocket::write: attempting to send packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.244266 ./fileclient: C150DgmSocket::write: Success writing packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.244284 ./fileclient: ./fileclient: reading server response:
-10/11/2022 14:26:22.244305 ./fileclient: C150DgmSocket::read: successful read with len=41 |ed1a853a3bd73c52d49809d78798c01528288a27.|
-10/11/2022 14:26:22.244323 ./fileclient: PRINTING RESPONSE: Response received is "ed1a853a3bd73c52d49809d78798c01528288a27"
+10/13/2022 10:52:07.652258 ./fileclient: ./fileclient: Writing message: "data10 has been sent to the server"
+10/13/2022 10:52:07.652278 ./fileclient: C150DgmSocket::write: attempting to send packet with len=35 |data10 has been sent to the server.|
+10/13/2022 10:52:07.652311 ./fileclient: C150DgmSocket::write: Success writing packet with len=35 |data10 has been sent to the server.|
+10/13/2022 10:52:07.652329 ./fileclient: ./fileclient: reading server response:
+10/13/2022 10:52:07.652354 ./fileclient: C150DgmSocket::read: successful read with len=41 |ed1a853a3bd73c52d49809d78798c01528288a27.|
+10/13/2022 10:52:07.652372 ./fileclient: PRINTING RESPONSE: Response received is "ed1a853a3bd73c52d49809d78798c01528288a27"
 
-10/11/2022 14:26:22.244355 ./fileclient: fileclient: Writing message: "success"
-10/11/2022 14:26:22.244380 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |success.|
-10/11/2022 14:26:22.244421 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |success.|
-10/11/2022 14:26:22.244791 ./fileclient: C150DgmSocket::read: successful read with len=41 |ed1a853a3bd73c52d49809d78798c01528288a27.|
-10/11/2022 14:26:22.244809 ./fileclient: PRINTING RESPONSE: Response received is "ed1a853a3bd73c52d49809d78798c01528288a27"
+10/13/2022 10:52:07.652401 ./fileclient: fileclient: Writing message: "success"
+10/13/2022 10:52:07.652419 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |success.|
+10/13/2022 10:52:07.652445 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |success.|
+10/13/2022 10:52:07.652888 ./fileclient: C150DgmSocket::read: successful read with len=41 |ed1a853a3bd73c52d49809d78798c01528288a27.|
+10/13/2022 10:52:07.652909 ./fileclient: PRINTING RESPONSE: Response received is "ed1a853a3bd73c52d49809d78798c01528288a27"
 
-10/11/2022 14:26:22.256910 ./fileclient: ./fileclient: Writing message: "A file has just been sent to the server"
-10/11/2022 14:26:22.256945 ./fileclient: C150DgmSocket::write: attempting to send packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.256992 ./fileclient: C150DgmSocket::write: Success writing packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.257011 ./fileclient: ./fileclient: reading server response:
-10/11/2022 14:26:22.257032 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed success.|
-10/11/2022 14:26:22.257050 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed success"
+10/13/2022 10:52:07.653493 ./fileclient: ./fileclient: Writing message: "data100 has been sent to the server"
+10/13/2022 10:52:07.653544 ./fileclient: C150DgmSocket::write: attempting to send packet with len=36 |data100 has been sent to the server.|
+10/13/2022 10:52:07.653609 ./fileclient: C150DgmSocket::write: Success writing packet with len=36 |data100 has been sent to the server.|
+10/13/2022 10:52:07.653629 ./fileclient: ./fileclient: reading server response:
+10/13/2022 10:52:07.653650 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed success.|
+10/13/2022 10:52:07.653668 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed success"
 
-10/11/2022 14:26:22.257092 ./fileclient: fileclient: Writing message: "failure"
-10/11/2022 14:26:22.257120 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/11/2022 14:26:22.257170 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/11/2022 14:26:22.269397 ./fileclient: C150DgmSocket::read: successful read with len=41 |509c3bbba070aee5a6c24f75b0a22bb1b5924de9.|
-10/11/2022 14:26:22.269423 ./fileclient: PRINTING RESPONSE: Response received is "509c3bbba070aee5a6c24f75b0a22bb1b5924de9"
+10/13/2022 10:52:07.653700 ./fileclient: fileclient: Writing message: "failure"
+10/13/2022 10:52:07.653742 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
+10/13/2022 10:52:07.653798 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
+10/13/2022 10:52:07.654161 ./fileclient: C150DgmSocket::read: successful read with len=41 |2ae44fb0bc87b11d4dd709fabb01d41b4da3f1d8.|
+10/13/2022 10:52:07.654190 ./fileclient: PRINTING RESPONSE: Response received is "2ae44fb0bc87b11d4dd709fabb01d41b4da3f1d8"
 
-10/11/2022 14:26:22.269950 ./fileclient: ./fileclient: Writing message: "A file has just been sent to the server"
-10/11/2022 14:26:22.269975 ./fileclient: C150DgmSocket::write: attempting to send packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.270011 ./fileclient: C150DgmSocket::write: Success writing packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.270030 ./fileclient: ./fileclient: reading server response:
-10/11/2022 14:26:22.270050 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed failure.|
-10/11/2022 14:26:22.270078 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed failure"
+10/13/2022 10:52:07.654969 ./fileclient: ./fileclient: Writing message: "data1000 has been sent to the server"
+10/13/2022 10:52:07.655017 ./fileclient: C150DgmSocket::write: attempting to send packet with len=37 |data1000 has been sent to the server.|
+10/13/2022 10:52:07.655060 ./fileclient: C150DgmSocket::write: Success writing packet with len=37 |data1000 has been sent to the server.|
+10/13/2022 10:52:07.655092 ./fileclient: ./fileclient: reading server response:
+10/13/2022 10:52:07.655114 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed failure.|
+10/13/2022 10:52:07.655132 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed failure"
 
-10/11/2022 14:26:22.270110 ./fileclient: fileclient: Writing message: "failure"
-10/11/2022 14:26:22.270134 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/11/2022 14:26:22.270164 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/11/2022 14:26:22.270565 ./fileclient: C150DgmSocket::read: successful read with len=41 |2ae44fb0bc87b11d4dd709fabb01d41b4da3f1d8.|
-10/11/2022 14:26:22.270584 ./fileclient: PRINTING RESPONSE: Response received is "2ae44fb0bc87b11d4dd709fabb01d41b4da3f1d8"
+10/13/2022 10:52:07.655163 ./fileclient: fileclient: Writing message: "failure"
+10/13/2022 10:52:07.655182 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
+10/13/2022 10:52:07.655227 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
+10/13/2022 10:52:07.655870 ./fileclient: C150DgmSocket::read: successful read with len=41 |f7b01477912929f4bafcb4fa55d1e2a3c78154fb.|
+10/13/2022 10:52:07.655889 ./fileclient: PRINTING RESPONSE: Response received is "f7b01477912929f4bafcb4fa55d1e2a3c78154fb"
 
-10/11/2022 14:26:22.271172 ./fileclient: ./fileclient: Writing message: "A file has just been sent to the server"
-10/11/2022 14:26:22.271192 ./fileclient: C150DgmSocket::write: attempting to send packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.271228 ./fileclient: C150DgmSocket::write: Success writing packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.271245 ./fileclient: ./fileclient: reading server response:
-10/11/2022 14:26:22.271265 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed failure.|
-10/11/2022 14:26:22.271283 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed failure"
+10/13/2022 10:52:07.660373 ./fileclient: ./fileclient: Writing message: "data10000 has been sent to the server"
+10/13/2022 10:52:07.660424 ./fileclient: C150DgmSocket::write: attempting to send packet with len=38 |data10000 has been sent to the server.|
+10/13/2022 10:52:07.660480 ./fileclient: C150DgmSocket::write: Success writing packet with len=38 |data10000 has been sent to the server.|
+10/13/2022 10:52:07.660506 ./fileclient: ./fileclient: reading server response:
+10/13/2022 10:52:07.660536 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed failure.|
+10/13/2022 10:52:07.660562 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed failure"
 
-10/11/2022 14:26:22.271311 ./fileclient: fileclient: Writing message: "failure"
-10/11/2022 14:26:22.271335 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/11/2022 14:26:22.271367 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/11/2022 14:26:22.271966 ./fileclient: C150DgmSocket::read: successful read with len=41 |f7b01477912929f4bafcb4fa55d1e2a3c78154fb.|
-10/11/2022 14:26:22.271984 ./fileclient: PRINTING RESPONSE: Response received is "f7b01477912929f4bafcb4fa55d1e2a3c78154fb"
+10/13/2022 10:52:07.660604 ./fileclient: fileclient: Writing message: "failure"
+10/13/2022 10:52:07.660637 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
+10/13/2022 10:52:07.660682 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
+10/13/2022 10:52:07.663924 ./fileclient: C150DgmSocket::read: successful read with len=41 |e77ea6c165d950a8a12106e0d5c0cea731436b8f.|
+10/13/2022 10:52:07.663953 ./fileclient: PRINTING RESPONSE: Response received is "e77ea6c165d950a8a12106e0d5c0cea731436b8f"
 
-10/11/2022 14:26:22.274552 ./fileclient: ./fileclient: Writing message: "A file has just been sent to the server"
-10/11/2022 14:26:22.274574 ./fileclient: C150DgmSocket::write: attempting to send packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.274615 ./fileclient: C150DgmSocket::write: Success writing packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.274644 ./fileclient: ./fileclient: reading server response:
-10/11/2022 14:26:22.274665 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed failure.|
-10/11/2022 14:26:22.274683 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed failure"
+10/13/2022 10:52:07.664513 ./fileclient: ./fileclient: Writing message: "independence.txt has been sent to the server"
+10/13/2022 10:52:07.664545 ./fileclient: C150DgmSocket::write: attempting to send packet with len=45 |independence.txt has been sent to the server.|
+10/13/2022 10:52:07.664591 ./fileclient: C150DgmSocket::write: Success writing packet with len=45 |independence.txt has been sent to the server.|
+10/13/2022 10:52:07.664617 ./fileclient: ./fileclient: reading server response:
+10/13/2022 10:52:07.664649 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed failure.|
+10/13/2022 10:52:07.664676 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed failure"
 
-10/11/2022 14:26:22.274715 ./fileclient: fileclient: Writing message: "failure"
-10/11/2022 14:26:22.274735 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/11/2022 14:26:22.274769 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/11/2022 14:26:22.277409 ./fileclient: C150DgmSocket::read: successful read with len=41 |e77ea6c165d950a8a12106e0d5c0cea731436b8f.|
-10/11/2022 14:26:22.277427 ./fileclient: PRINTING RESPONSE: Response received is "e77ea6c165d950a8a12106e0d5c0cea731436b8f"
+10/13/2022 10:52:07.664719 ./fileclient: fileclient: Writing message: "failure"
+10/13/2022 10:52:07.664746 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
+10/13/2022 10:52:07.664790 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
+10/13/2022 10:52:07.665152 ./fileclient: C150DgmSocket::read: successful read with len=41 |3e8908cd00421182f02169e752a3760bc4e26100.|
+10/13/2022 10:52:07.665182 ./fileclient: PRINTING RESPONSE: Response received is "3e8908cd00421182f02169e752a3760bc4e26100"
 
-10/11/2022 14:26:22.277815 ./fileclient: ./fileclient: Writing message: "A file has just been sent to the server"
-10/11/2022 14:26:22.277844 ./fileclient: C150DgmSocket::write: attempting to send packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.277877 ./fileclient: C150DgmSocket::write: Success writing packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.277895 ./fileclient: ./fileclient: reading server response:
-10/11/2022 14:26:22.277914 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed failure.|
-10/11/2022 14:26:22.277932 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed failure"
+10/13/2022 10:52:07.665630 ./fileclient: ./fileclient: Writing message: "love.txt has been sent to the server"
+10/13/2022 10:52:07.665664 ./fileclient: C150DgmSocket::write: attempting to send packet with len=37 |love.txt has been sent to the server.|
+10/13/2022 10:52:07.665727 ./fileclient: C150DgmSocket::write: Success writing packet with len=37 |love.txt has been sent to the server.|
+10/13/2022 10:52:07.665761 ./fileclient: ./fileclient: reading server response:
+10/13/2022 10:52:07.665794 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed failure.|
+10/13/2022 10:52:07.665819 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed failure"
 
-10/11/2022 14:26:22.277960 ./fileclient: fileclient: Writing message: "failure"
-10/11/2022 14:26:22.277979 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/11/2022 14:26:22.278013 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/11/2022 14:26:22.278392 ./fileclient: C150DgmSocket::read: successful read with len=41 |8d55d5b9ea5f4c2b2aef5bad91732c427c5a35cd.|
-10/11/2022 14:26:22.278411 ./fileclient: PRINTING RESPONSE: Response received is "8d55d5b9ea5f4c2b2aef5bad91732c427c5a35cd"
+10/13/2022 10:52:07.665874 ./fileclient: fileclient: Writing message: "failure"
+10/13/2022 10:52:07.665900 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
+10/13/2022 10:52:07.665936 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
+10/13/2022 10:52:07.666236 ./fileclient: C150DgmSocket::read: successful read with len=41 |d305a2073980306d8a4a889dd28cc645c55bcd12.|
+10/13/2022 10:52:07.666255 ./fileclient: PRINTING RESPONSE: Response received is "d305a2073980306d8a4a889dd28cc645c55bcd12"
 
-10/11/2022 14:26:22.278791 ./fileclient: ./fileclient: Writing message: "A file has just been sent to the server"
-10/11/2022 14:26:22.278819 ./fileclient: C150DgmSocket::write: attempting to send packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.278851 ./fileclient: C150DgmSocket::write: Success writing packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.278868 ./fileclient: ./fileclient: reading server response:
-10/11/2022 14:26:22.278888 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed failure.|
-10/11/2022 14:26:22.278905 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed failure"
+10/13/2022 10:52:07.666659 ./fileclient: ./fileclient: Writing message: "moor.txt has been sent to the server"
+10/13/2022 10:52:07.666679 ./fileclient: C150DgmSocket::write: attempting to send packet with len=37 |moor.txt has been sent to the server.|
+10/13/2022 10:52:07.666709 ./fileclient: C150DgmSocket::write: Success writing packet with len=37 |moor.txt has been sent to the server.|
+10/13/2022 10:52:07.666726 ./fileclient: ./fileclient: reading server response:
+10/13/2022 10:52:07.666747 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed failure.|
+10/13/2022 10:52:07.666764 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed failure"
 
-10/11/2022 14:26:22.278941 ./fileclient: fileclient: Writing message: "failure"
-10/11/2022 14:26:22.278973 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/11/2022 14:26:22.279003 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/11/2022 14:26:22.279604 ./fileclient: C150DgmSocket::read: successful read with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
-10/11/2022 14:26:22.279622 ./fileclient: PRINTING RESPONSE: Response received is "22b123ed27c0214d4b6b4890c9e296f8036c0797"
+10/13/2022 10:52:07.666792 ./fileclient: fileclient: Writing message: "failure"
+10/13/2022 10:52:07.666811 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
+10/13/2022 10:52:07.666835 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
+10/13/2022 10:52:07.667347 ./fileclient: C150DgmSocket::read: successful read with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
+10/13/2022 10:52:07.667372 ./fileclient: PRINTING RESPONSE: Response received is "22b123ed27c0214d4b6b4890c9e296f8036c0797"
 
-10/11/2022 14:26:22.280019 ./fileclient: ./fileclient: Writing message: "A file has just been sent to the server"
-10/11/2022 14:26:22.280039 ./fileclient: C150DgmSocket::write: attempting to send packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.280078 ./fileclient: C150DgmSocket::write: Success writing packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.280096 ./fileclient: ./fileclient: reading server response:
-10/11/2022 14:26:22.280116 ./fileclient: C150DgmSocket::read: successful read with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
-10/11/2022 14:26:22.280134 ./fileclient: PRINTING RESPONSE: Response received is "22b123ed27c0214d4b6b4890c9e296f8036c0797"
+10/13/2022 10:52:07.668208 ./fileclient: ./fileclient: Writing message: "romeo.txt has been sent to the server"
+10/13/2022 10:52:07.668228 ./fileclient: C150DgmSocket::write: attempting to send packet with len=38 |romeo.txt has been sent to the server.|
+10/13/2022 10:52:07.668260 ./fileclient: C150DgmSocket::write: Success writing packet with len=38 |romeo.txt has been sent to the server.|
+10/13/2022 10:52:07.668277 ./fileclient: ./fileclient: reading server response:
+10/13/2022 10:52:07.668298 ./fileclient: C150DgmSocket::read: successful read with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
+10/13/2022 10:52:07.668316 ./fileclient: PRINTING RESPONSE: Response received is "22b123ed27c0214d4b6b4890c9e296f8036c0797"
 
-10/11/2022 14:26:22.280164 ./fileclient: fileclient: Writing message: "failure"
-10/11/2022 14:26:22.280187 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/11/2022 14:26:22.280215 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/11/2022 14:26:22.280542 ./fileclient: C150DgmSocket::read: successful read with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
-10/11/2022 14:26:22.280560 ./fileclient: PRINTING RESPONSE: Response received is "22b123ed27c0214d4b6b4890c9e296f8036c0797"
+10/13/2022 10:52:07.668351 ./fileclient: fileclient: Writing message: "failure"
+10/13/2022 10:52:07.668376 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
+10/13/2022 10:52:07.668403 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
+10/13/2022 10:52:07.668754 ./fileclient: C150DgmSocket::read: successful read with len=41 |22b123ed27c0214d4b6b4890c9e296f8036c0797.|
+10/13/2022 10:52:07.668772 ./fileclient: PRINTING RESPONSE: Response received is "22b123ed27c0214d4b6b4890c9e296f8036c0797"
 
-10/11/2022 14:26:22.280932 ./fileclient: ./fileclient: Writing message: "A file has just been sent to the server"
-10/11/2022 14:26:22.280951 ./fileclient: C150DgmSocket::write: attempting to send packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.280982 ./fileclient: C150DgmSocket::write: Success writing packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.281004 ./fileclient: ./fileclient: reading server response:
-10/11/2022 14:26:22.281023 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed failure.|
-10/11/2022 14:26:22.281041 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed failure"
+10/13/2022 10:52:07.669136 ./fileclient: ./fileclient: Writing message: "tyger.txt has been sent to the server"
+10/13/2022 10:52:07.669155 ./fileclient: C150DgmSocket::write: attempting to send packet with len=38 |tyger.txt has been sent to the server.|
+10/13/2022 10:52:07.669181 ./fileclient: C150DgmSocket::write: Success writing packet with len=38 |tyger.txt has been sent to the server.|
+10/13/2022 10:52:07.669199 ./fileclient: ./fileclient: reading server response:
+10/13/2022 10:52:07.669222 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed failure.|
+10/13/2022 10:52:07.669240 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed failure"
 
-10/11/2022 14:26:22.281078 ./fileclient: fileclient: Writing message: "failure"
-10/11/2022 14:26:22.281102 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/11/2022 14:26:22.281131 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/11/2022 14:26:22.281469 ./fileclient: C150DgmSocket::read: successful read with len=41 |3e8908cd00421182f02169e752a3760bc4e26100.|
-10/11/2022 14:26:22.281488 ./fileclient: PRINTING RESPONSE: Response received is "3e8908cd00421182f02169e752a3760bc4e26100"
+10/13/2022 10:52:07.669267 ./fileclient: fileclient: Writing message: "failure"
+10/13/2022 10:52:07.669285 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
+10/13/2022 10:52:07.669309 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
+10/13/2022 10:52:07.670154 ./fileclient: C150DgmSocket::read: successful read with len=41 |b9d614873a0e997e6d9187db8e653446f84c8ee7.|
+10/13/2022 10:52:07.670173 ./fileclient: PRINTING RESPONSE: Response received is "b9d614873a0e997e6d9187db8e653446f84c8ee7"
 
-10/11/2022 14:26:22.281862 ./fileclient: ./fileclient: Writing message: "A file has just been sent to the server"
-10/11/2022 14:26:22.281882 ./fileclient: C150DgmSocket::write: attempting to send packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.281913 ./fileclient: C150DgmSocket::write: Success writing packet with len=40 |A file has just been sent to the server.|
-10/11/2022 14:26:22.281931 ./fileclient: ./fileclient: reading server response:
-10/11/2022 14:26:22.281950 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed failure.|
-10/11/2022 14:26:22.281968 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed failure"
+10/13/2022 10:52:07.684114 ./fileclient: ./fileclient: Writing message: "warandpeace.txt has been sent to the server"
+10/13/2022 10:52:07.684140 ./fileclient: C150DgmSocket::write: attempting to send packet with len=44 |warandpeace.txt has been sent to the server.|
+10/13/2022 10:52:07.684178 ./fileclient: C150DgmSocket::write: Success writing packet with len=44 |warandpeace.txt has been sent to the server.|
+10/13/2022 10:52:07.684216 ./fileclient: ./fileclient: reading server response:
+10/13/2022 10:52:07.684239 ./fileclient: C150DgmSocket::read: successful read with len=25 |server confirmed failure.|
+10/13/2022 10:52:07.684257 ./fileclient: PRINTING RESPONSE: Response received is "server confirmed failure"
 
-10/11/2022 14:26:22.281998 ./fileclient: fileclient: Writing message: "failure"
-10/11/2022 14:26:22.282021 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
-10/11/2022 14:26:22.282052 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
-10/11/2022 14:26:22.282386 ./fileclient: C150DgmSocket::read: successful read with len=41 |d305a2073980306d8a4a889dd28cc645c55bcd12.|
-10/11/2022 14:26:22.282405 ./fileclient: PRINTING RESPONSE: Response received is "d305a2073980306d8a4a889dd28cc645c55bcd12"
+10/13/2022 10:52:07.684295 ./fileclient: fileclient: Writing message: "failure"
+10/13/2022 10:52:07.684325 ./fileclient: C150DgmSocket::write: attempting to send packet with len=8 |failure.|
+10/13/2022 10:52:07.684365 ./fileclient: C150DgmSocket::write: Success writing packet with len=8 |failure.|
+10/13/2022 10:52:07.685485 ./fileclient: C150DgmSocket::read: successful read with len=41 |8d55d5b9ea5f4c2b2aef5bad91732c427c5a35cd.|
+10/13/2022 10:52:07.685503 ./fileclient: PRINTING RESPONSE: Response received is "8d55d5b9ea5f4c2b2aef5bad91732c427c5a35cd"
 
