@@ -14,7 +14,9 @@ typedef enum Step{
     SENDFILE = 0,
     HASHCODE,
     SENDSTATUS,
-    CONFIRMATION
+    CONFIRMATION,
+    ENDOFDIR,
+    RESET
 } Step;
 
 
@@ -24,7 +26,8 @@ struct Packet {
     Step currStep;
     int order;
 };
-
+ string SUCCESS = "success";
+ string FAILURE = "failure";
 void setUpDebugLogging(const char *logname, int argc, char *argv[]);
 void checkDirectory(char *dirname);
 void createHashCode(string currFileName, string path, C150DgmSocket *sock, string targetDirectory);
@@ -51,11 +54,9 @@ main(int argc, char *argv[])
     // struct dirent *targetFile;  // Directory entry for source file
 	string builtHashVal = "";
 
-
-   
     
     // Check command line and parse arguments
-    //
+    
     if (argc != 4)  {
         fprintf(stderr,"Correct syntax is: %s <network nastiness> <file nastiness> <targetDIR>\n", argv[0]);
         exit(1);
@@ -105,21 +106,29 @@ main(int argc, char *argv[])
             // Or, the server should send back a confirmation of receiving a status message if 
             // it receives a status update (SUCCESS OR FAILURE
              // skip the . and .. names
+            int currFileNum = 0;
             while(1) {
-
+            currFileNum++;
+            cout << "currFileNum: " << currFileNum << endl;
             bool isFileRecieved = false;
             bool isStatusReceived = false;
             string fileString;
+
             while(!isFileRecieved) {
-                Packet fileMessagePacket;
-                readlen = sock -> read((char*)&fileMessagePacket, sizeof(fileMessagePacket));
+                
+                char tmpfileMessagePacket[sizeof(struct Packet)];
+                readlen = sock -> read(tmpfileMessagePacket, sizeof(struct Packet));
                 if (readlen == 0) {
                     c150debug->printf(C150APPLICATION,"Read zero length message, trying again");
                     continue;
                 }
-                char* fileMessage = fileMessagePacket.data;
-                fileMessage[readlen] = '\0';  // make sure null terminated
-                fileString = string(fileMessage); // Convert to C++ string ...it's slightly
+
+                Packet *fileMessagePacket = (Packet*)tmpfileMessagePacket;
+                char* fileMessage = fileMessagePacket->data;
+                fileMessage[strlen(fileMessage)] = '\0';
+                fileString = string(fileMessage);
+                cleanString(fileString);
+                // cout << "fileString: " << fileString << endl;
                 //                                     // easier to work with, and cleanString
                 /*
                 plan for how to resolve packets dropping the " a file has just been received message":
@@ -127,18 +136,26 @@ main(int argc, char *argv[])
                 If it is, then tell the client to resend the file
                 */
                 // maybe cant set this to true in the event that we need to do a repeat hash?
-                cleanString(fileString);            // c150ids-supplied utility: changes
+                         // c150ids-supplied utility: changes
                 //                                     // non-printing characters to .
-                
-                if (fileString == "success" or fileString == "failure") {
+                // cout << "fileMessagePacket->currStep: " << fileMessagePacket->currStep << endl;
+                if (fileMessagePacket->currStep  == ENDOFDIR) {
+                    string sampleMsg = "RESET";
+                    Packet serverResetPacket = makePacket((char*)sampleMsg.c_str(), RESET, 0);
+                    char * serverResetPacketArr = (char *)&serverResetPacket;
+                    currFileNum = 1;
+                    cout << "reset received" << endl;
+                    sock -> write(serverResetPacketArr, sizeof(serverResetPacket)); 
                     continue;
                 }
+                if (fileMessagePacket->currStep != SENDFILE or fileMessagePacket->order != currFileNum) {
+                    continue;
+                }
+              
                 isFileRecieved = true;
                 cout << "message received from client" << endl;
                 // for week 1, just compare "fileString", which is actually a hash code, 
                 // with itself which may or may not be wrong 
-
-                
             }
 
                  createHashCode(fileString, path, sock, targetDirectory);
@@ -146,19 +163,22 @@ main(int argc, char *argv[])
                 while(!isStatusReceived) {
                     // if you get "a file has been received from the server" message, go back to the top
                     // of this loop 
-                     Packet statusMessagePacket;
-                    readlen = sock -> read((char*)&statusMessagePacket, sizeof(statusMessagePacket));
+                    char tmpStatusPacket[sizeof(struct Packet)];
+                    readlen = sock -> read(tmpStatusPacket, sizeof(struct Packet));
                     if (readlen == 0) {
                         c150debug->printf(C150APPLICATION,"Read zero length message, trying again");
                         continue;
                     }
-                    char* statusMessage = statusMessagePacket.data;
-                    statusMessage[readlen] = '\0';  // make sure null terminated
-                    string statusString(statusMessage); // Convert to C++ string ...it's slightly
-                                                        // easier to work with, and cleanString
+                     Packet *statusPacket = (Packet*)tmpStatusPacket;
+                    char* statusMessage = statusPacket->data;
+                    statusMessage[strlen(statusMessage)] = '\0';
+                    string statusString(statusMessage);
                     cleanString(statusString);
+                    if (statusString == (SUCCESS + " final") or statusString == (FAILURE + " final")) {
+                        currFileNum = 0;
+                    }
 
-                    if(statusString != "success" and statusString != "failure") {
+                    if(statusPacket->currStep != SENDSTATUS) {
                         createHashCode(fileString, path, sock, targetDirectory);
                     }
                    else {
@@ -173,7 +193,8 @@ main(int argc, char *argv[])
                         string serverConfirmationMsg = "server confirmed " + statusString;
                         c150debug->printf(C150APPLICATION,"sending confirmation msg \" %s\"\n", serverConfirmationMsg.c_str());
                          Packet serverConfirmationPacket = makePacket((char*)serverConfirmationMsg.c_str(), CONFIRMATION, 0);
-                        sock -> write((const char*)&serverConfirmationPacket, sizeof(serverConfirmationPacket)); 
+                         char * serverConfirmationPacketArr = (char *)&serverConfirmationPacket;
+                        sock -> write(serverConfirmationPacketArr, sizeof(serverConfirmationPacket)); 
                    }
                  }
             }
@@ -217,7 +238,8 @@ void createHashCode(string currFileName, string path, C150DgmSocket *sock, strin
     buffer = new stringstream;
     *buffer << t->rdbuf();
     SHA1((const unsigned char *)buffer->str().c_str(), (buffer->str()).length(), obuf);
-    cout << "current file being hashed on server-side: " << string(currFileName) << endl;
+    cout << "currFileName: " << currFileName << endl;
+    cout << "current file being hashed on server-side: " << currFileName << endl;
     for (int i = 0; i < 20; i++)
     {
         sprintf(hashVal,"%02x",(unsigned int) obuf[i]);
@@ -229,7 +251,8 @@ void createHashCode(string currFileName, string path, C150DgmSocket *sock, strin
     c150debug->printf(C150APPLICATION,"Responding with message=\"%s\"", builtHashValArr);
     //send builtHashVal
     Packet hashCodePacket = makePacket(builtHashValArr,HASHCODE, 0);
-    sock -> write((const char*)&hashCodePacket, sizeof(hashCodePacket));
+     char * hashCodePacketArr = (char *)&hashCodePacket;
+    sock -> write(hashCodePacketArr, sizeof(hashCodePacket));
     delete t;
     delete buffer;
 }
@@ -345,7 +368,7 @@ void setUpDebugLogging(const char *logname, int argc, char *argv[]) {
 
 Packet makePacket(char* dataArr, Step currStep, int order) {
     Packet newPacket;
-   memcpy(newPacket.data, dataArr, sizeof(newPacket.data));
+   memcpy(newPacket.data, dataArr, strlen(dataArr) + 1);
     newPacket.currStep = currStep;
     newPacket.order = order;
     return newPacket;

@@ -67,7 +67,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "c150grading.h"
-
+#include <unistd.h>
 // using std::ofstream;
 using namespace std;          // for C++ std library
 using namespace C150NETWORK;  // for all the comp150 utilities 
@@ -75,7 +75,9 @@ typedef enum Step{
     SENDFILE = 0,
     HASHCODE,
     SENDSTATUS,
-    CONFIRMATION
+    CONFIRMATION,
+    ENDOFDIR,
+    RESET
 } Step;
 
 
@@ -91,7 +93,7 @@ struct Packet {
 void checkAndPrintMessage(ssize_t readlen, char *buf, ssize_t bufferlen);
 void setUpDebugLogging(const char *logname, int argc, char *argv[]);
 void checkDirectory(char *dirname);
-void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string fileName, int numRetry);
+void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string fileName, int numRetry, dirent *sourceFile);
 Packet makePacket(char* dataArr, Step currStep, int order);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -114,6 +116,7 @@ Packet makePacket(char* dataArr, Step currStep, int order);
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
    string SUCCESS = "success";
    string FAILURE = "failure";
+       DIR* SOURCE;
 //   ofstream fileCheckResults;
 int 
 main(int argc, char *argv[]) {
@@ -146,7 +149,6 @@ main(int argc, char *argv[]) {
     // int networkNastiness = atoi(argv[2]);
     // int filenastiness = atoi(argv[3]);
     string srcdir = argv[4];
-    DIR* SOURCE;
     struct dirent *sourceFile; 
     string clientHashVal = "";
     unsigned char obuf[20];
@@ -211,15 +213,15 @@ main(int argc, char *argv[]) {
                 //send the file to the server, wait for its response of the hash code of the file that it just read.
                 // perform a comparison between the hash code you currently have in this iteration and what is sent
                 // back to you 
-                cout << "test 0" << endl; 
+             
                 string fakeFileSend = string(sourceFile->d_name);
                 // const char* fakeFileSendArr = fakeFileSend.c_str();
                 c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", argv[0], fakeFileSend.c_str());
-                cout << "test 1" << endl;
-                Packet newPacket = makePacket(sourceFile->d_name, SENDFILE, fileNum);
-                cout << "test 2" << endl;
-                sock -> write((const char*)&newPacket, sizeof(newPacket)); // +1 includes the null
                
+                Packet newPacket = makePacket(sourceFile->d_name, SENDFILE, fileNum);
+                char * newPacketArr = (char *)&newPacket;
+                sock -> write(newPacketArr, sizeof(newPacket)); // +1 includes the null
+                
                 // if it is not the same, you need to resend the file and repeat this process of #2
                 c150debug->printf(C150APPLICATION,"%s: reading server response:", argv[0]);
                 // read hash code from server
@@ -229,20 +231,16 @@ main(int argc, char *argv[]) {
                     // if hash code from server does not arrive, then skip this iteration of the while loop
                     // TODO: make sure that the response received is  a hash code and not a confirmation message
                     // If this occurs, then resend the hash code?
-                    Packet serverHashCodePacket;
-                      cout << "test 3" << endl;
-                    readlen = sock -> read((char*)&serverHashCodePacket, sizeof(serverHashCodePacket));
-                
-                    char* serverHashCode = serverHashCodePacket.data;
-                    serverHashCode[readlen] = '\0';
-                    cout << "test 4" << endl;
+                    char tmpserverHashCode[sizeof(struct Packet)];
+                   
+                    readlen = sock -> read(tmpserverHashCode, sizeof(struct Packet));
+                    
+                    Packet *serverHashCodePacket = (Packet*)tmpserverHashCode;
+                    char* serverHashCode = serverHashCodePacket->data;
+                    serverHashCode[strlen(serverHashCode)] = '\0';
                     string serverHashCodeString(serverHashCode);
-                    cout << "test 5" << endl;
                     cleanString(serverHashCodeString);
-
-                    
-                    
-                       cout << "test 5" << endl;
+                    // cout << "serverHashCodeString: " << serverHashCodeString << endl;
                     if(readlen == 0 or sock -> timedout()) {
                         retryCounterHashCode ++;
                         if (retryCounterHashCode == 5) {
@@ -253,7 +251,7 @@ main(int argc, char *argv[]) {
                         continue;
                     }
                     // checking to make sure that the hash code received is actually a hash code
-                    if (serverHashCodePacket.currStep != HASHCODE) {
+                    if (serverHashCodePacket->currStep != HASHCODE) {
                         isConfirmReceived = true;
                         continue;
                     }
@@ -261,35 +259,39 @@ main(int argc, char *argv[]) {
                     // the file/initial message again
                     isFileSendRetry = false;
                     
-                    checkAndPrintMessage(readlen, serverHashCode, sizeof(serverHashCode));
+                    // checkAndPrintMessage(serverHashCodeString.length() - 1, serverHashCode, sizeof(serverHashCode));
                     // if the server hash val is not a hash code, go back to the top and resend "a file has 
                     // been sent message"
-                    compareHashCodes(clientHashVal, serverHashCode, sock, string(sourceFile->d_name), 1);
+                    
+                    compareHashCodes(clientHashVal, serverHashCode, sock, string(sourceFile->d_name), 1, sourceFile);
 
                     // reads sent from server
                     int numRetries = 0;
                     while(1) {
-                         Packet serverConfirmationPacket;
-                        
-                        readlen = sock -> read((char*)&serverConfirmationPacket, sizeof(serverConfirmationPacket));
+                        char tmpserverConfirmation[sizeof(struct Packet)];
+                        readlen = sock -> read(tmpserverConfirmation, sizeof(struct Packet));
+                    
                         if(sock -> timedout()) {
                             numRetries++;
                             cout << "sock timedout. retrying" << endl;
                             // resend the hash code status
-                            compareHashCodes(clientHashVal, serverConfirmationPacket.data, sock, string(sourceFile->d_name), 1);
+                            compareHashCodes(clientHashVal, serverHashCode, sock, string(sourceFile->d_name), 1, sourceFile);
                             continue;
                         }
-                        char* serverConfirmation = serverConfirmationPacket.data;
-                        serverConfirmation[readlen] = '\0';
+                       
+                       
+                        Packet *serverConfirmationPacket = (Packet*)tmpserverConfirmation;
+                        char* serverConfirmation = serverConfirmationPacket->data;
+                        serverConfirmation[strlen(serverConfirmation)] = '\0';
                         string serverConfirmationString(serverConfirmation);
                         cleanString(serverConfirmationString);
                         // if it does not time out
-                        if (serverConfirmationPacket.currStep != CONFIRMATION) {
+                        if (serverConfirmationPacket->currStep != CONFIRMATION) {
                                 continue;
                         }
                         if(readlen != 0) {
                             isConfirmReceived = true;
-                            checkAndPrintMessage(readlen, serverConfirmation, sizeof(serverConfirmation));
+                            // checkAndPrintMessage(serverConfirmationString.length() -1 , serverConfirmation, sizeof(serverConfirmation));
                             // cout << "the client received the confirmation from the server" << endl;
                             break;
                         }
@@ -304,10 +306,36 @@ main(int argc, char *argv[]) {
             }
                 delete t;
                 delete buffer;
+                
+        }
+        //TODO: insert ending packet send here
+        string sampleMsg = "ENDOFDIR";
+        Packet newPacket = makePacket((char*)sampleMsg.c_str(), ENDOFDIR, 0);
+        char * newPacketArr = (char *)&newPacket;
+        sock -> write(newPacketArr, sizeof(newPacket)); // +1 includes the null
+        bool isResetConfirmed = false;
+        while(!isResetConfirmed) {
+            char tmpENDServerConfirmation[sizeof(struct Packet)];
+            readlen = sock -> read(tmpENDServerConfirmation, sizeof(struct Packet));
+            if(sock -> timedout()) {
+                Packet newPacket = makePacket((char*)sampleMsg.c_str(), ENDOFDIR, 0);
+                char * newPacketArr = (char *)&newPacket;
+                sock -> write(newPacketArr, sizeof(newPacket)); // +1 includes the null
+                continue;
+            }
+            else {
+                Packet *serverENDConfirmationPacket = (Packet*)tmpENDServerConfirmation;
+                // if it does not time out
+                if (serverENDConfirmationPacket->currStep != RESET) {
+                        continue;
+                }
+                isResetConfirmed = true;
+            }
+
         }
         closedir(SOURCE);
         // fileCheckResults.close();
-        //////////////////////////////////////////////////////////////////////////////////////////////////
+      
 
         // Check and print the incoming message
     }
@@ -335,25 +363,43 @@ main(int argc, char *argv[]) {
 //        and print it to standard output.
 //
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
- 
-void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string currFile, int numRetry) {
+ // TODO: implement the proper num retry
+void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string currFile, int numRetry, dirent *sourceFile) {
     if(string(serverHashCode) == clientHashCode) {
-        // cout << string(serverHashCode) << " == " << clientHashCode << endl;
+        cout << string(serverHashCode) << " == " << clientHashCode << endl;
         cout << "==" << endl;
         // 3. send confirmation message to server. 
         // *GRADING << "File: " << currFile << " end-to-end check succeeded, attempt " << numRetry << endl;
         c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", "fileclient", SUCCESS.c_str());
-        Packet newPacket = makePacket((char*)SUCCESS.c_str(), SENDSTATUS, 0);
-        sock -> write((const char*)&newPacket, sizeof(newPacket)); // +1 includes the null
+        string statusMessage;
+        // int f = open("seek", currFile);
+        // if(lseek(f, sourceFile->d_off, SEEK_END) == NULL) {
+        //     statusMessage = SUCCESS + " final";
+        // }
+        // else {
+        //     statusMessage = SUCCESS;
+        // }
+        Packet newPacket = makePacket((char*)statusMessage.c_str(), SENDSTATUS, 0);
+        char * newPacketArr = (char *)&newPacket;
+        sock -> write(newPacketArr, sizeof(newPacket)); // +1 includes the null
     }
     else {
-        // cout << string(serverHashCode) << " != " << clientHashCode << endl;
+        cout << string(serverHashCode) << " != " << clientHashCode << endl;
         cout << "!=" << endl;
         // *GRADING << "File: " << currFile << " end-to-end check failed, attempt " << numRetry << endl;
         c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", "fileclient", FAILURE.c_str());
-        Packet newPacket = makePacket((char*)FAILURE.c_str(), SENDSTATUS, 0);
-        sock -> write((const char*)&newPacket, sizeof(newPacket)); 
+        string statusMessage;
+        if(sourceFile + sourceFile->d_off == NULL) {
+            statusMessage = FAILURE + " final";
+        }
+        else {
+            statusMessage = FAILURE;
+        }
+        Packet newPacket = makePacket((char*)statusMessage.c_str(), SENDSTATUS, 0);
+        char * newPacketArr = (char *)&newPacket;
+        sock -> write(newPacketArr, sizeof(newPacket)); 
     }
+     
 }
 
 void
@@ -497,7 +543,7 @@ checkDirectory(char *dirname) {
 Packet makePacket(char* dataArr, Step currStep, int order) {
     Packet newPacket;
     // newPacket.data = data;
-    memcpy(newPacket.data, dataArr, sizeof(newPacket.data));
+    memcpy(newPacket.data, dataArr, strlen(dataArr) + 1);
     newPacket.currStep = currStep;
     newPacket.order = order;
     return newPacket;
