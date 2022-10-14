@@ -10,25 +10,10 @@
 #include "c150grading.h"
 using namespace C150NETWORK;  // for all the comp150 utilities 
 
-typedef enum Step{
-    SENDFILE = 0,
-    HASHCODE,
-    SENDSTATUS,
-    CONFIRMATION
-} Step;
-
-
-struct Packet {
-    // is this a filename or status?
-    char* data;
-    Step currStep;
-    int order;
-};
 
 void setUpDebugLogging(const char *logname, int argc, char *argv[]);
 void checkDirectory(char *dirname);
 void createHashCode(string currFileName, string path, C150DgmSocket *sock, string targetDirectory);
-Packet makePacket(char* data, Step currStep, int order);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 //
@@ -53,7 +38,7 @@ main(int argc, char *argv[])
 
 
    
-    
+    //
     // Check command line and parse arguments
     //
     if (argc != 4)  {
@@ -80,6 +65,8 @@ main(int argc, char *argv[])
     setUpDebugLogging("pingserverdebug.txt",argc, argv);
     c150debug->setIndent("    ");              // if we merge client and server
     ssize_t readlen;             // amount of data read from socket
+    char fileMessage[512];
+    char statusMessage[512];
     try{
         checkDirectory((char*)targetDirectory.c_str());
         TARGET = opendir(argv[3]);
@@ -111,13 +98,11 @@ main(int argc, char *argv[])
             bool isStatusReceived = false;
             string fileString;
             while(!isFileRecieved) {
-                Packet fileMessagePacket;
-                readlen = sock -> read((char*)&fileMessagePacket, sizeof(fileMessagePacket));
+                readlen = sock -> read(fileMessage, sizeof(fileMessage)-1);
                 if (readlen == 0) {
                     c150debug->printf(C150APPLICATION,"Read zero length message, trying again");
                     continue;
                 }
-                char* fileMessage = fileMessagePacket.data;
                 fileMessage[readlen] = '\0';  // make sure null terminated
                 fileString = string(fileMessage); // Convert to C++ string ...it's slightly
                 //                                     // easier to work with, and cleanString
@@ -146,13 +131,12 @@ main(int argc, char *argv[])
                 while(!isStatusReceived) {
                     // if you get "a file has been received from the server" message, go back to the top
                     // of this loop 
-                     Packet statusMessagePacket;
-                    readlen = sock -> read((char*)&statusMessagePacket, sizeof(statusMessagePacket));
+                    readlen = sock -> read(statusMessage, sizeof(statusMessage)-1);
                     if (readlen == 0) {
                         c150debug->printf(C150APPLICATION,"Read zero length message, trying again");
                         continue;
                     }
-                    char* statusMessage = statusMessagePacket.data;
+
                     statusMessage[readlen] = '\0';  // make sure null terminated
                     string statusString(statusMessage); // Convert to C++ string ...it's slightly
                                                         // easier to work with, and cleanString
@@ -172,8 +156,7 @@ main(int argc, char *argv[])
                         // send confirmation of receiving status to client 
                         string serverConfirmationMsg = "server confirmed " + statusString;
                         c150debug->printf(C150APPLICATION,"sending confirmation msg \" %s\"\n", serverConfirmationMsg.c_str());
-                         Packet serverConfirmationPacket = makePacket((char*)serverConfirmationMsg.c_str(), CONFIRMATION, 0);
-                        sock -> write((const char*)&serverConfirmationPacket, sizeof(serverConfirmationPacket)); 
+                        sock -> write(serverConfirmationMsg.c_str(), serverConfirmationMsg.length() + 1); 
                    }
                  }
             }
@@ -224,12 +207,11 @@ void createHashCode(string currFileName, string path, C150DgmSocket *sock, strin
         string stringHashVal(hashVal);
         builtHashVal += stringHashVal;
     }
-        char* builtHashValArr = (char*)builtHashVal.c_str();
+        const char* builtHashValArr = builtHashVal.c_str();
 
     c150debug->printf(C150APPLICATION,"Responding with message=\"%s\"", builtHashValArr);
     //send builtHashVal
-    Packet hashCodePacket = makePacket(builtHashValArr,HASHCODE, 0);
-    sock -> write((const char*)&hashCodePacket, sizeof(hashCodePacket));
+    sock -> write(builtHashValArr, builtHashVal.length() + 1);
     delete t;
     delete buffer;
 }
@@ -342,15 +324,4 @@ void setUpDebugLogging(const char *logname, int argc, char *argv[]) {
     c150debug->enableLogging(C150APPLICATION | C150NETWORKTRAFFIC | 
                              C150NETWORKDELIVERY); 
 }
-
-Packet makePacket(char* data, Step currStep, int order) {
-    Packet newPacket;
-    newPacket.data = data;
-    newPacket.currStep = currStep;
-    newPacket.order = order;
-    return newPacket;
-}
-
-
-
 
