@@ -208,6 +208,12 @@ main(int argc, char *argv[]) {
                     // TODO: make sure that the response received is  a hash code and not a confirmation message
                     // If this occurs, then resend the hash code?
                     readlen = sock -> read(serverHashCode, sizeof(serverHashCode));
+
+                    serverHashCode[readlen] = '\0';
+                    string serverHashCodeString(serverHashCode);
+                    cleanString(serverHashCodeString);
+                    
+    
                     if(readlen == 0 or sock -> timedout()) {
                         retryCounterHashCode ++;
                         if (retryCounterHashCode == 5) {
@@ -217,11 +223,7 @@ main(int argc, char *argv[]) {
                         // doing a full file retry
                         continue;
                     }
-                    serverHashCode[readlen] = '\0';
-                    string serverHashCodeString(serverHashCode);
-                    cleanString(serverHashCodeString);
-                    cout << "length of " << serverHashCodeString << ": " << serverHashCodeString.length() << endl;
-                    
+                    // checking to make sure that the hash code received is actually a hash code
                     if (serverHashCodeString.length() != 40) {
                         isConfirmReceived = true;
                         continue;
@@ -247,7 +249,14 @@ main(int argc, char *argv[]) {
                             compareHashCodes(clientHashVal, serverHashCode, sock, string(sourceFile->d_name), 1);
                             continue;
                         }
+                        serverConfirmation[readlen] = '\0';
+                        string serverConfirmationString(serverConfirmation);
+                        cleanString(serverConfirmationString);
                         // if it does not time out
+                        if (serverConfirmationString != "server confirmed success" and 
+                            serverConfirmationString != "server confirmed failure") {
+                                continue;
+                        }
                         if(readlen != 0) {
                             isConfirmReceived = true;
                             checkAndPrintMessage(readlen, serverConfirmation, sizeof(serverConfirmation));

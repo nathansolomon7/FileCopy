@@ -112,12 +112,18 @@ main(int argc, char *argv[])
                 If it is, then tell the client to resend the file
                 */
                 // maybe cant set this to true in the event that we need to do a repeat hash?
-                isFileRecieved = true;
                 cleanString(fileString);            // c150ids-supplied utility: changes
                 //                                     // non-printing characters to .
+                
+                if (fileString == "success" or fileString == "failure") {
+                    continue;
+                }
+                isFileRecieved = true;
                 cout << "message received from client" << endl;
                 // for week 1, just compare "fileString", which is actually a hash code, 
                 // with itself which may or may not be wrong 
+
+                
             }
 
                  createHashCode(fileString, path, sock, targetDirectory);
@@ -141,12 +147,12 @@ main(int argc, char *argv[])
                     }
                    else {
                          isStatusReceived = true;
-                         if(statusString == "success") {
-                             *GRADING << "File: " << fileString << " end-to-end check succeeded" << endl;
-                         }
-                         else {
-                             *GRADING << "File: " << fileString << " end-to-end check failed" << endl;
-                         }
+                        //  if(statusString == "success") {
+                        //      *GRADING << "File: " << fileString << " end-to-end check succeeded" << endl;
+                        //  }
+                        //  else {
+                        //      *GRADING << "File: " << fileString << " end-to-end check failed" << endl;
+                        //  }
                         // send confirmation of receiving status to client 
                         string serverConfirmationMsg = "server confirmed " + statusString;
                         c150debug->printf(C150APPLICATION,"sending confirmation msg \" %s\"\n", serverConfirmationMsg.c_str());
