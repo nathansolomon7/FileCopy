@@ -58,7 +58,7 @@
 //     
 // --------------------------------------------------------------
 
-
+#include "c150nastydgmsocket.h"
 #include "c150dgmsocket.h"
 #include "c150debug.h"
 #include <fstream>
@@ -85,6 +85,7 @@ struct Packet {
     // is this a filename or status?
     char data[400];
     Step currStep;
+    int fileNum;
     int order;
 };
 
@@ -93,9 +94,9 @@ struct Packet {
 void checkAndPrintMessage(ssize_t readlen, char *buf, ssize_t bufferlen);
 void setUpDebugLogging(const char *logname, int argc, char *argv[]);
 void checkDirectory(char *dirname);
-void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string fileName, int numRetry, dirent *sourceFile);
-void sendPacket(string data, Step currStep, int orderNum, C150DgmSocket* sock);
-Packet makePacket(char* dataArr, Step currStep, int order);
+void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string fileName, int numRetry, dirent *sourceFile, int fileNum);
+void sendPacket(string data, Step currStep, int fileNum, C150DgmSocket* sock, int order);
+Packet makePacket(char* dataArr, Step currStep, int fileNum, int order);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 //
@@ -147,7 +148,7 @@ main(int argc, char *argv[]) {
     }
 
     string serverName = argv[1];
-    // int networkNastiness = atoi(argv[2]);
+    int networkNastiness = atoi(argv[2]);
     // int filenastiness = atoi(argv[3]);
     string srcdir = argv[4];
     struct dirent *sourceFile; 
@@ -166,7 +167,7 @@ main(int argc, char *argv[]) {
 
         // Create the socket
         c150debug->printf(C150APPLICATION,"Creating C150DgmSocket");
-        C150DgmSocket *sock = new C150DgmSocket();
+        C150DgmSocket *sock = new C150NastyDgmSocket(networkNastiness);
 
         // Tell the DGMSocket which server to talk to
         sock -> setServerName((char*)serverName.c_str());  
@@ -219,7 +220,7 @@ main(int argc, char *argv[]) {
                 // const char* fakeFileSendArr = fakeFileSend.c_str();
                 c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", argv[0], fakeFileSend.c_str());
 
-                sendPacket(string(sourceFile->d_name), SENDFILE, fileNum, sock);
+                sendPacket(string(sourceFile->d_name), SENDFILE, fileNum, sock, -1);
                 
                 // if it is not the same, you need to resend the file and repeat this process of #2
                 c150debug->printf(C150APPLICATION,"%s: reading server response:", argv[0]);
@@ -258,7 +259,7 @@ main(int argc, char *argv[]) {
                     // if the server hash val is not a hash code, go back to the top and resend "a file has 
                     // been sent message"
                     
-                    compareHashCodes(clientHashVal, serverHashCode, sock, string(sourceFile->d_name), 1, sourceFile);
+                    compareHashCodes(clientHashVal, serverHashCode, sock, string(sourceFile->d_name), 1, sourceFile, fileNum);
 
                     // reads sent from server
                     int numRetries = 0;
@@ -267,13 +268,13 @@ main(int argc, char *argv[]) {
                         readlen = sock -> read(tmpserverConfirmation, sizeof(struct Packet));
                     
                         if(sock -> timedout()) {
-                            if (numRetries == 5) {
+                            if (numRetries == 10) {
                                 throw C150NetworkException("the network is down");
                             }
                             numRetries++;
                             cout << "sock timedout. retrying" << endl;
                             // resend the hash code status
-                            compareHashCodes(clientHashVal, serverHashCode, sock, string(sourceFile->d_name), 1, sourceFile);
+                            compareHashCodes(clientHashVal, serverHashCode, sock, string(sourceFile->d_name), 1, sourceFile, fileNum);
                             continue;
                         }
                        
@@ -301,13 +302,13 @@ main(int argc, char *argv[]) {
         }
        // ending packet send here
         string sampleMsg = "ENDOFDIR";
-        sendPacket(sampleMsg, ENDOFDIR, 0, sock);
+        sendPacket(sampleMsg, ENDOFDIR, 0, sock, -1);
         bool isResetConfirmed = false;
         while(!isResetConfirmed) {
             char tmpENDServerConfirmation[sizeof(struct Packet)];
             readlen = sock -> read(tmpENDServerConfirmation, sizeof(struct Packet));
             if(sock -> timedout()) {
-                sendPacket(sampleMsg, ENDOFDIR, 0, sock);
+                sendPacket(sampleMsg, ENDOFDIR, 0, sock, -1);
                 continue;
             }
             else {
@@ -351,7 +352,7 @@ main(int argc, char *argv[]) {
 //
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
  // TODO: implement the proper num retry
-void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string currFile, int numRetry, dirent *sourceFile) {
+void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string currFile, int numRetry, dirent *sourceFile, int currFileNum) {
     if(string(serverHashCode) == clientHashCode) {
         cout << string(serverHashCode) << " == " << clientHashCode << endl;
         fileCheckResults << "==" << endl;
@@ -360,7 +361,7 @@ void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket
         // *GRADING << "File: " << currFile << " end-to-end check succeeded, attempt " << numRetry << endl;
         c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", "fileclient", SUCCESS.c_str());
         string statusMessage = SUCCESS;
-        sendPacket(SUCCESS, SENDSTATUS, 0, sock);
+        sendPacket(SUCCESS, SENDSTATUS, currFileNum, sock, -1);
     }
     else {
         cout << string(serverHashCode) << " != " << clientHashCode << endl;
@@ -368,13 +369,13 @@ void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket
         fileCheckResults << "!=" << endl;
         // *GRADING << "File: " << currFile << " end-to-end check failed, attempt " << numRetry << endl;
         c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", "fileclient", FAILURE.c_str());
-        sendPacket(FAILURE, SENDSTATUS, 0, sock);
+        sendPacket(FAILURE, SENDSTATUS, currFileNum, sock, -1);
     }
      
 }
 
-void sendPacket(string data, Step currStep, int orderNum, C150DgmSocket* sock) {
-        Packet newPacket = makePacket((char*)data.c_str(), currStep, orderNum);
+void sendPacket(string data, Step currStep, int fileNum, C150DgmSocket* sock, int order) {
+        Packet newPacket = makePacket((char*)data.c_str(), currStep, fileNum, order);
         char * newPacketArr = (char *)&newPacket;
         sock -> write(newPacketArr, sizeof(newPacket)); 
 }
@@ -517,11 +518,12 @@ checkDirectory(char *dirname) {
   }
 }
 
-Packet makePacket(char* dataArr, Step currStep, int order) {
+Packet makePacket(char* dataArr, Step currStep, int fileNum, int order) {
     Packet newPacket;
     // newPacket.data = data;
     memcpy(newPacket.data, dataArr, strlen(dataArr) + 1);
     newPacket.currStep = currStep;
+    newPacket.fileNum = fileNum;
     newPacket.order = order;
     return newPacket;
 }

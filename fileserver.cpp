@@ -24,6 +24,7 @@ struct Packet {
     // is this a filename or status?
     char data[400];
     Step currStep;
+    int fileNum;
     int order;
 };
  string SUCCESS = "success";
@@ -31,7 +32,9 @@ struct Packet {
 void setUpDebugLogging(const char *logname, int argc, char *argv[]);
 void checkDirectory(char *dirname);
 void createHashCode(string currFileName, string path, C150DgmSocket *sock, string targetDirectory);
-Packet makePacket(char* dataArr, Step currStep, int order);
+void sendPacket(string data, Step currStep, int fileNum, C150DgmSocket* sock, int order);
+Packet makePacket(char* dataArr, Step currStep, int fileNum, int order);
+string readMessage(char* buffer, Packet p);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 //
@@ -141,14 +144,23 @@ main(int argc, char *argv[])
                 // cout << "fileMessagePacket->currStep: " << fileMessagePacket->currStep << endl;
                 if (fileMessagePacket->currStep  == ENDOFDIR) {
                     string sampleMsg = "RESET";
-                    Packet serverResetPacket = makePacket((char*)sampleMsg.c_str(), RESET, 0);
+                    Packet serverResetPacket = makePacket((char*)sampleMsg.c_str(), RESET, 0, -1);
                     char * serverResetPacketArr = (char *)&serverResetPacket;
                     currFileNum = 1;
                     cout << "reset received" << endl;
                     sock -> write(serverResetPacketArr, sizeof(serverResetPacket)); 
                     continue;
                 }
-                if (fileMessagePacket->currStep != SENDFILE or fileMessagePacket->order != currFileNum) {
+                cout << "currFileNum: " << currFileNum << endl;
+                cout << "fileMessagePacket->fileNum: " << fileMessagePacket->fileNum << endl;
+                if (fileMessagePacket->currStep == SENDSTATUS and fileMessagePacket->fileNum == currFileNum - 1) {
+                    //send packet with success/failure to client as confirmation
+                    cout << "re-sending the confirmation packet by the server" << endl;
+                    sendPacket("tmp", CONFIRMATION, 0, sock, -1);
+                    continue;
+                }
+
+                if (fileMessagePacket->currStep != SENDFILE or fileMessagePacket->fileNum != currFileNum) {
                     continue;
                 }
               
@@ -192,7 +204,7 @@ main(int argc, char *argv[])
                         // send confirmation of receiving status to client 
                         string serverConfirmationMsg = "server confirmed " + statusString;
                         c150debug->printf(C150APPLICATION,"sending confirmation msg \" %s\"\n", serverConfirmationMsg.c_str());
-                         Packet serverConfirmationPacket = makePacket((char*)serverConfirmationMsg.c_str(), CONFIRMATION, 0);
+                         Packet serverConfirmationPacket = makePacket((char*)serverConfirmationMsg.c_str(), CONFIRMATION, 0, -1);
                          char * serverConfirmationPacketArr = (char *)&serverConfirmationPacket;
                         sock -> write(serverConfirmationPacketArr, sizeof(serverConfirmationPacket)); 
                    }
@@ -212,6 +224,7 @@ main(int argc, char *argv[])
 
     //////////////////////////////////////////////////////////////////////////////////////////////
 }
+
 
 void
 checkDirectory(char *dirname) {
@@ -250,7 +263,7 @@ void createHashCode(string currFileName, string path, C150DgmSocket *sock, strin
 
     c150debug->printf(C150APPLICATION,"Responding with message=\"%s\"", builtHashValArr);
     //send builtHashVal
-    Packet hashCodePacket = makePacket(builtHashValArr,HASHCODE, 0);
+    Packet hashCodePacket = makePacket(builtHashValArr,HASHCODE, 0, -1);
      char * hashCodePacketArr = (char *)&hashCodePacket;
     sock -> write(hashCodePacketArr, sizeof(hashCodePacket));
     delete t;
@@ -366,12 +379,31 @@ void setUpDebugLogging(const char *logname, int argc, char *argv[]) {
                              C150NETWORKDELIVERY); 
 }
 
-Packet makePacket(char* dataArr, Step currStep, int order) {
+Packet makePacket(char* dataArr, Step currStep, int fileNum, int order) {
     Packet newPacket;
-   memcpy(newPacket.data, dataArr, strlen(dataArr) + 1);
+    // newPacket.data = data;
+    memcpy(newPacket.data, dataArr, strlen(dataArr) + 1);
     newPacket.currStep = currStep;
+    newPacket.fileNum = fileNum;
     newPacket.order = order;
     return newPacket;
+}
+
+void sendPacket(string data, Step currStep, int fileNum, C150DgmSocket* sock, int order) {
+        Packet newPacket = makePacket((char*)data.c_str(), currStep, fileNum, order);
+        char * newPacketArr = (char *)&newPacket;
+        sock -> write(newPacketArr, sizeof(newPacket)); 
+}
+
+
+string readMessage(char* buffer, Packet* p, C150DgmSocket* sock) {
+    sock -> read(buffer, sizeof(struct Packet));
+    p = (Packet*)buffer;
+    char* readMessage = p->data;
+    readMessage[strlen(readMessage)] = '\0';
+    string readMessageString(readMessage);
+    cleanString(readMessageString);
+    return readMessageString;
 }
 
 
