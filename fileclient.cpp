@@ -186,14 +186,14 @@ main(int argc, char *argv[]) {
 
     
         string path;
-        int fileNum = 0;
+        int currFileNum = 0;
         while ((sourceFile = readdir(SOURCE)) != NULL) {
             clientHashVal = "";
             // skip the . and .. names
             if ((strcmp(sourceFile->d_name, ".") == 0) || (strcmp(sourceFile->d_name, "..")  == 0 )) {
                  continue;  
             }
-            fileNum++;
+            currFileNum++;
 
             path = srcdir + "/" + sourceFile->d_name;
             t = new ifstream(path);
@@ -210,7 +210,6 @@ main(int argc, char *argv[]) {
             bool isFileSendRetry = true;
             while (isFileSendRetry) {
 
-            
                 // 2.
                 //send the file to the server, wait for its response of the hash code of the file that it just read.
                 // perform a comparison between the hash code you currently have in this iteration and what is sent
@@ -220,7 +219,7 @@ main(int argc, char *argv[]) {
                 // const char* fakeFileSendArr = fakeFileSend.c_str();
                 c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", argv[0], fakeFileSend.c_str());
 
-                sendPacket(string(sourceFile->d_name), SENDFILE, fileNum, sock, -1);
+                sendPacket(string(sourceFile->d_name), SENDFILE, currFileNum, sock, -1);
                 
                 // if it is not the same, you need to resend the file and repeat this process of #2
                 c150debug->printf(C150APPLICATION,"%s: reading server response:", argv[0]);
@@ -252,6 +251,10 @@ main(int argc, char *argv[]) {
                         isConfirmReceived = true;
                         continue;
                     }
+
+                    if(serverHashCodePacket->fileNum != currFileNum) {
+                        continue;
+                    }
                     // the server got the file and you received back a hash code, so do not retry sending 
                     // the file/initial message again
                     isFileSendRetry = false;
@@ -259,11 +262,12 @@ main(int argc, char *argv[]) {
                     // if the server hash val is not a hash code, go back to the top and resend "a file has 
                     // been sent message"
                     
-                    compareHashCodes(clientHashVal, serverHashCode, sock, string(sourceFile->d_name), 1, sourceFile, fileNum);
+                    compareHashCodes(clientHashVal, serverHashCode, sock, string(sourceFile->d_name), 1, sourceFile, currFileNum);
 
                     // reads sent from server
                     int numRetries = 0;
                     while(1) {
+                        // cout << "waiting for confirmation" << endl;
                         char tmpserverConfirmation[sizeof(struct Packet)];
                         readlen = sock -> read(tmpserverConfirmation, sizeof(struct Packet));
                     
@@ -274,7 +278,7 @@ main(int argc, char *argv[]) {
                             numRetries++;
                             cout << "sock timedout. retrying" << endl;
                             // resend the hash code status
-                            compareHashCodes(clientHashVal, serverHashCode, sock, string(sourceFile->d_name), 1, sourceFile, fileNum);
+                            compareHashCodes(clientHashVal, serverHashCode, sock, string(sourceFile->d_name), 1, sourceFile, currFileNum);
                             continue;
                         }
                        
@@ -285,7 +289,9 @@ main(int argc, char *argv[]) {
                         string serverConfirmationString(serverConfirmation);
                         cleanString(serverConfirmationString);
                         // if it does not time out
-                        if (serverConfirmationPacket->currStep != CONFIRMATION) {
+                        cout << "serverConfirmationPacket->fileNum: " << serverConfirmationPacket->fileNum << endl;
+                        cout << "currFileNum: " << currFileNum << endl;
+                        if (serverConfirmationPacket->currStep != CONFIRMATION or serverConfirmationPacket->fileNum != currFileNum) {
                                 continue;
                         }
                         if(readlen != 0) {

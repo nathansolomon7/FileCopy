@@ -31,7 +31,7 @@ struct Packet {
  string FAILURE = "failure";
 void setUpDebugLogging(const char *logname, int argc, char *argv[]);
 void checkDirectory(char *dirname);
-void createHashCode(string currFileName, string path, C150DgmSocket *sock, string targetDirectory);
+void createHashCode(string currFileName, string path, C150DgmSocket *sock, string targetDirectory, int currFileNum);
 void sendPacket(string data, Step currStep, int fileNum, C150DgmSocket* sock, int order);
 Packet makePacket(char* dataArr, Step currStep, int fileNum, int order);
 string readMessage(char* buffer, Packet p);
@@ -156,7 +156,7 @@ main(int argc, char *argv[])
                 if (fileMessagePacket->currStep == SENDSTATUS and fileMessagePacket->fileNum == currFileNum - 1) {
                     //send packet with success/failure to client as confirmation
                     cout << "re-sending the confirmation packet by the server" << endl;
-                    sendPacket("tmp", CONFIRMATION, 0, sock, -1);
+                    sendPacket("re-sending the confirmation packet", CONFIRMATION, currFileNum - 1, sock, -1);
                     continue;
                 }
 
@@ -169,8 +169,8 @@ main(int argc, char *argv[])
                 // for week 1, just compare "fileString", which is actually a hash code, 
                 // with itself which may or may not be wrong 
             }
-
-                 createHashCode(fileString, path, sock, targetDirectory);
+                 
+                 createHashCode(fileString, path, sock, targetDirectory, currFileNum);
                 //wait for status response from client
                 while(!isStatusReceived) {
                     // if you get "a file has been received from the server" message, go back to the top
@@ -191,7 +191,7 @@ main(int argc, char *argv[])
                     }
 
                     if(statusPacket->currStep != SENDSTATUS) {
-                        createHashCode(fileString, path, sock, targetDirectory);
+                        createHashCode(fileString, path, sock, targetDirectory, currFileNum);
                     }
                    else {
                          isStatusReceived = true;
@@ -240,7 +240,7 @@ checkDirectory(char *dirname) {
   }
 }
 
-void createHashCode(string currFileName, string path, C150DgmSocket *sock, string targetDirectory) {
+void createHashCode(string currFileName, string path, C150DgmSocket *sock, string targetDirectory, int currFileNum) {
     char hashVal[20];
     unsigned char obuf[20];
     ifstream *t;
@@ -263,7 +263,7 @@ void createHashCode(string currFileName, string path, C150DgmSocket *sock, strin
 
     c150debug->printf(C150APPLICATION,"Responding with message=\"%s\"", builtHashValArr);
     //send builtHashVal
-    Packet hashCodePacket = makePacket(builtHashValArr,HASHCODE, 0, -1);
+    Packet hashCodePacket = makePacket(builtHashValArr,HASHCODE, currFileNum, -1);
      char * hashCodePacketArr = (char *)&hashCodePacket;
     sock -> write(hashCodePacketArr, sizeof(hashCodePacket));
     delete t;
