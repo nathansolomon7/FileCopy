@@ -1,52 +1,52 @@
-10/17/2022 15:43:27.689933 ./fileclient: Creating C150DgmSocket
-10/17/2022 15:43:27.695469 ./fileclient: ./fileclient: Writing message: "data1"
-10/17/2022 15:43:27.695498 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |data1...........................v?v.......q..-@>..v..............Z...X.....r..g..................}.&|
-10/17/2022 15:43:27.695542 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |data1...........................v?v.......q..-@>..v..............Z...X.....r..g..................}.&|
-10/17/2022 15:43:27.697106 ./fileclient: C150DgmSocket::read: successful read with len=412 |file data1.tmp has been opened...................P$.....0...................z....P$.....P...........|
-10/17/2022 15:43:27.697126 ./fileclient: C150NastyDgmSocket::read: delivering packet of length 412 |file data1.tmp has been opened...................P$.....0...................z....P$.....P...........|
-10/17/2022 15:43:27.697264 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |     0      1      2      3      4      5      6      7      8      9 ..#.Hc.......6................|
-10/17/2022 15:43:27.697299 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |     0      1      2      3      4      5      6      7      8      9 ..#.Hc.......6................|
-10/17/2022 15:43:27.697329 ./fileclient: ./fileclient: end of file
-10/17/2022 15:43:27.697363 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |71.  0      1      2      3      4      5      6      7 y.......    9 ....7.........................|
-10/17/2022 15:43:27.697393 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |71.  0      1      2      3      4      5      6      7 y.......    9 ....7.........................|
-10/17/2022 15:43:30.723176 ./fileclient: C150DgmSocket::read: returning timeout to application
-10/17/2022 15:43:30.723208 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |71.  0      1      2      3      4      5      6.Ap......Bp.....`Vc.......@..............Ap......Vc.|
-10/17/2022 15:43:30.723284 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |71.  0      1      2      3      4      5      6.Ap......Bp.....`Vc.......@..............Ap......Vc.|
-10/17/2022 15:43:30.724864 ./fileclient: C150DgmSocket::read: successful read with len=412 |cc0d8bcdd8d1b1956d128a8cf80dc01c3f0d2b49.....q.....................".{aI.....9.r................v?v.|
-10/17/2022 15:43:30.724884 ./fileclient: C150NastyDgmSocket::read: delivering packet of length 412 |cc0d8bcdd8d1b1956d128a8cf80dc01c3f0d2b49.....q.....................".{aI.....9.r................v?v.|
-10/17/2022 15:43:30.724944 ./fileclient: fileclient: Writing message: "success"
-10/17/2022 15:43:30.724967 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |success.yDgmSocket::read: delivering packet of l..................n.....@.......)...........f0d. .n.|
-10/17/2022 15:43:30.725011 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |success.yDgmSocket::read: delivering packet of l..................n.....@.......)...........f0d. .n.|
-10/17/2022 15:43:30.725051 ./fileclient: ./fileclient: reading server confirmation:
-10/17/2022 15:43:30.725202 ./fileclient: C150DgmSocket::read: successful read with len=412 |server confirmed success..@......xI.......................@......xI.............PkI.......%.........|
-10/17/2022 15:43:30.725222 ./fileclient: C150NastyDgmSocket::read: delivering packet of length 412 |server confirmed success..@......xI.......................@......xI.............PkI.......%.........|
-10/17/2022 15:43:30.726175 ./fileclient: ./fileclient: Writing message: "data10"
-10/17/2022 15:43:30.726197 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |data10...........................R........U.LU.~.....Z.........._....~4.~!..?bW.................u.m.|
-10/17/2022 15:43:30.726229 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |data10...........................R........U.LU.~.....Z.........._....~4.~!..?bW.................u.m.|
-10/17/2022 15:43:30.727320 ./fileclient: C150DgmSocket::read: successful read with len=412 |file data10.tmp has been opened.........................yS..z....xI......&..z.......................|
-10/17/2022 15:43:30.727340 ./fileclient: C150NastyDgmSocket::read: delivering packet of length 412 |file data10.tmp has been opened.........................yS..z....xI......&..z.......................|
-10/17/2022 15:43:30.728106 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |     0      1      2      3      4      5      6      7      8      9 .    10     11     12     13  |
-10/17/2022 15:43:30.728147 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |     0      1      2      3      4      5      6      7      8      9 .    10     11     12     13  |
-10/17/2022 15:43:30.728689 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 | 56     57     58     59 .    60     61     62     63     64     65     66     67     68     69 .   |
-10/17/2022 15:43:30.728728 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 | 56     57     58     59 .    60     61     62     63     64     65     66     67     68     69 .   |
-10/17/2022 15:43:30.728753 ./fileclient: ./fileclient: end of file
-10/17/2022 15:43:30.728805 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |310.    57     58     59 .    60     61     62     63   y....... 65     ..7.........................|
-10/17/2022 15:43:30.728830 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |310.    57     58     59 .    60     61     62     63   y....... 65     ..7.........................|
-10/17/2022 15:43:33.731166 ./fileclient: C150DgmSocket::read: returning timeout to application
-10/17/2022 15:43:33.731197 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |310.    57     58     59 .    60     61     62  .Ap......Bp.....`Vc.......@..............Ap......Vc.|
-10/17/2022 15:43:33.731250 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |310.    57     58     59 .    60     61     62  .Ap......Bp.....`Vc.......@..............Ap......Vc.|
-10/17/2022 15:43:33.738354 ./fileclient: C150DgmSocket::read: successful read with len=412 |ed1a853a3bd73c52d49809d78798c01528288a27...t`..`...`f.L..........k....yv.1..~.2..................R..|
-10/17/2022 15:43:33.738375 ./fileclient: C150NastyDgmSocket::read: delivering packet of length 412 |ed1a853a3bd73c52d49809d78798c01528288a27...t`..`...`f.L..........k....yv.1..~.2..................R..|
-10/17/2022 15:43:33.738417 ./fileclient: fileclient: Writing message: "success"
-10/17/2022 15:43:33.738438 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |success.yDgmSocket::read: delivering packet of length 412 |ed1a853a3bd73c52d49809d78798c01528288a27.|
-10/17/2022 15:43:33.738466 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |success.yDgmSocket::read: delivering packet of length 412 |ed1a853a3bd73c52d49809d78798c01528288a27.|
-10/17/2022 15:43:33.738484 ./fileclient: ./fileclient: reading server confirmation:
-10/17/2022 15:43:33.738739 ./fileclient: C150DgmSocket::read: successful read with len=412 |server confirmed success..@...............................@.....................PkI.......%.........|
-10/17/2022 15:43:33.738759 ./fileclient: C150NastyDgmSocket::read: delivering packet of length 412 |server confirmed success..@...............................@.....................PkI.......%.........|
-10/17/2022 15:43:33.739638 ./fileclient: ./fileclient: Writing message: "data100"
-10/17/2022 15:43:33.739659 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |data100...........................b........2......b....;..........b....9.}...I....................b.|
-10/17/2022 15:43:33.739688 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |data100...........................b........2......b....;..........b....9.}...I....................b.|
-10/17/2022 15:43:33.740767 ./fileclient: C150DgmSocket::read: successful read with len=412 |file data100.tmp has been opened........................yS..z............&..z.......................|
-10/17/2022 15:43:33.740787 ./fileclient: C150NastyDgmSocket::read: delivering packet of length 412 |file data100.tmp has been opened........................yS..z............&..z.......................|
-10/17/2022 15:43:33.741537 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |     0      1      2      3      4      5      6      7      8      9 .    10     11     12     13  |
-10/17/2022 15:43:33.741567 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |     0      1      2      3      4      5      6      7      8      9 .    10     11     12     13  |
+10/17/2022 20:35:58.266375 ./fileclient: Creating C150DgmSocket
+10/17/2022 20:35:58.271587 ./fileclient: ./fileclient: Writing message: "data1"
+10/17/2022 20:35:58.271614 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |data1...........................i}...........q.....".{aI...........".{aI.....9.r................v?v.|
+10/17/2022 20:35:58.271656 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |data1...........................i}...........q.....".{aI...........".{aI.....9.r................v?v.|
+10/17/2022 20:35:58.273165 ./fileclient: C150DgmSocket::read: successful read with len=412 |file data1.tmp has been opened...................0......0........................0......P...........|
+10/17/2022 20:35:58.273185 ./fileclient: C150NastyDgmSocket::read: delivering packet of length 412 |file data1.tmp has been opened...................0......0........................0......P...........|
+10/17/2022 20:35:58.273656 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |     0      1      2      3      4      5      6      7      8      9 .....-g.......................|
+10/17/2022 20:35:58.273689 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |     0      1      2      3      4      5      6      7      8      9 .....-g.......................|
+10/17/2022 20:35:58.273718 ./fileclient: ./fileclient: end of file
+10/17/2022 20:35:58.273753 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |71.  0      1      2      3      4      5      6      7      8      9 .....-g.......................|
+10/17/2022 20:35:58.273791 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |71.  0      1      2      3      4      5      6      7      8      9 .....-g.......................|
+10/17/2022 20:36:01.315161 ./fileclient: C150DgmSocket::read: returning timeout to application
+10/17/2022 20:36:01.315191 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |71.  0      1      2      3      4      5      6.!0......"0...............@..............!0.........|
+10/17/2022 20:36:01.315259 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |71.  0      1      2      3      4      5      6.!0......"0...............@..............!0.........|
+10/17/2022 20:36:01.316886 ./fileclient: C150DgmSocket::read: successful read with len=412 |cc0d8bcdd8d1b1956d128a8cf80dc01c3f0d2b49.....9.r..v.............v?v.......q..-@>.................Z..|
+10/17/2022 20:36:01.316907 ./fileclient: C150NastyDgmSocket::read: delivering packet of length 412 |cc0d8bcdd8d1b1956d128a8cf80dc01c3f0d2b49.....9.r..v.............v?v.......q..-@>.................Z..|
+10/17/2022 20:36:01.316956 ./fileclient: fileclient: Writing message: "success"
+10/17/2022 20:36:01.316979 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |success.yDgmSocket::read: delivering packet of l........................@.......)...........f0d. ...|
+10/17/2022 20:36:01.317009 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |success.yDgmSocket::read: delivering packet of l........................@.......)...........f0d. ...|
+10/17/2022 20:36:01.317039 ./fileclient: ./fileclient: reading server confirmation:
+10/17/2022 20:36:01.317221 ./fileclient: C150DgmSocket::read: successful read with len=412 |server confirmed success..@.....@0........................@.....@0...............#.......}..........|
+10/17/2022 20:36:01.317242 ./fileclient: C150NastyDgmSocket::read: delivering packet of length 412 |server confirmed success..@.....@0........................@.....@0...............#.......}..........|
+10/17/2022 20:36:01.318600 ./fileclient: ./fileclient: Writing message: "data10"
+10/17/2022 20:36:01.318623 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |data10.............................`.......t`..`......yv.........k....yv.1..~.2..................R..|
+10/17/2022 20:36:01.318652 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |data10.............................`.......t`..`......yv.........k....yv.1..~.2..................R..|
+10/17/2022 20:36:01.319907 ./fileclient: C150DgmSocket::read: successful read with len=412 |file data10.tmp has been opened.........................y.......@0..................................|
+10/17/2022 20:36:01.319928 ./fileclient: C150NastyDgmSocket::read: delivering packet of length 412 |file data10.tmp has been opened.........................y.......@0..................................|
+10/17/2022 20:36:01.323182 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |     0      1      2      3      4      5      6      7      8      9 .    10     11     12     13  |
+10/17/2022 20:36:01.323212 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |     0      1      2      3      4      5      6      7      8      9 .    10     11     12     13  |
+10/17/2022 20:36:01.325763 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 | 56     57     58     59 .    60     61     62     63     64     65     66     67     68     69 .   |
+10/17/2022 20:36:01.325799 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 | 56     57     58     59 .    60     61     62     63     64     65     66     67     68     69 .   |
+10/17/2022 20:36:01.325829 ./fileclient: ./fileclient: end of file
+10/17/2022 20:36:01.325851 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |310.    57     58     59 .    60     61     62     63     64     65     66     67     68     69 .   |
+10/17/2022 20:36:01.325878 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |310.    57     58     59 .    60     61     62     63     64     65     66     67     68     69 .   |
+10/17/2022 20:36:04.387165 ./fileclient: C150DgmSocket::read: returning timeout to application
+10/17/2022 20:36:04.387196 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |310.    57     58     59 .    60     61     62  .!0......"0...............@.....7     68.!0.........|
+10/17/2022 20:36:04.387268 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |310.    57     58     59 .    60     61     62  .!0......"0...............@.....7     68.!0.........|
+10/17/2022 20:36:04.388966 ./fileclient: C150DgmSocket::read: successful read with len=412 |ed1a853a3bd73c52d49809d78798c01528288a27.1..~.2......Z...........R...Z....U.LU.~................_...|
+10/17/2022 20:36:04.388988 ./fileclient: C150NastyDgmSocket::read: delivering packet of length 412 |ed1a853a3bd73c52d49809d78798c01528288a27.1..~.2......Z...........R...Z....U.LU.~................_...|
+10/17/2022 20:36:04.389025 ./fileclient: fileclient: Writing message: "success"
+10/17/2022 20:36:04.389052 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |success.yDgmSocket::read: delivering packet of length 412 |ed1a853a3bd73c52d49809d78798c01528288a27.|
+10/17/2022 20:36:04.389098 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |success.yDgmSocket::read: delivering packet of length 412 |ed1a853a3bd73c52d49809d78798c01528288a27.|
+10/17/2022 20:36:04.389123 ./fileclient: ./fileclient: reading server confirmation:
+10/17/2022 20:36:04.389319 ./fileclient: C150DgmSocket::read: successful read with len=412 |server confirmed success..@...............................@......................#.......}..........|
+10/17/2022 20:36:04.389343 ./fileclient: C150NastyDgmSocket::read: delivering packet of length 412 |server confirmed success..@...............................@......................#.......}..........|
+10/17/2022 20:36:04.390296 ./fileclient: ./fileclient: Writing message: "data100"
+10/17/2022 20:36:04.390322 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |data100...........................R9..............b....?..........b....?.....A....................b.|
+10/17/2022 20:36:04.390360 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |data100...........................R9..............b....?..........b....?.....A....................b.|
+10/17/2022 20:36:04.391444 ./fileclient: C150DgmSocket::read: successful read with len=412 |file data100.tmp has been opened........................y...........................................|
+10/17/2022 20:36:04.391465 ./fileclient: C150NastyDgmSocket::read: delivering packet of length 412 |file data100.tmp has been opened........................y...........................................|
+10/17/2022 20:36:04.394682 ./fileclient: C150DgmSocket::write: attempting to send packet with len=412 |     0      1      2      3      4      5      6      7      8      9 .    10     11     12     13  |
+10/17/2022 20:36:04.394725 ./fileclient: C150DgmSocket::write: Success writing packet with len=412 |     0      1      2      3      4      5      6      7      8      9 .    10     11     12     13  |

@@ -248,7 +248,7 @@ main(int argc, char *argv[]) {
                  bool endOfFile = false;
                  string serverHashCode;
                  char tmpBuf[1];
-                 int currPacketSize = 0;
+                //  int currPacketSize = 0;
                  int counter = 0;
                  char buffer[400];
                  F->fread(tmpBuf, 1, 1);
@@ -257,20 +257,20 @@ main(int argc, char *argv[]) {
                         while((F->feof() == 0 and counter <= 2000)) {
                             // could change the read logic to do a read up here then do a check to see if 
                             // we are now at EOF then break and set endOfFile to true 
-                            currPacketSize++;
+                            // currPacketSize++;
                             // if(fileName == "data10") {
                             //     cout << "buffer: " << string(buffer) << endl;
                             // }
-                           cout << "adding read char to buffer:" << endl;
+                        //    cout << "adding read char to buffer:" << endl;
                             buffer[counter % 400] = tmpBuf[0];
-                            cout << "added char to buffer:" << endl;
+                            // cout << "added char to buffer:" << endl;
                             counter++;
-                            cout << "counter: " << counter << endl;
+                            // cout << "counter: " << counter << endl;
                             // send a packet every 400 bytes
                             if ((counter % 400) == 0) {
                                 sendPacket(string(buffer), COPYFILE, currFileNum, sock, -1);
                                 cout << "sent packet" << endl;
-                                currPacketSize = 0;
+                                // currPacketSize = 0;
                                 // cout << "post sending packet" << endl;
                                 if (counter == 2000) {
                                     counter = 0;
@@ -280,9 +280,9 @@ main(int argc, char *argv[]) {
                                 }
                             }
                             // memory leak happening here?
-                            cout << "mem leak happenging now:" << endl;
+                            // cout << "mem leak happenging now:" << endl;
                             F->fread(tmpBuf, 1, 1);
-                            cout << (int)tmpBuf[0] << endl;
+                            // cout << (int)tmpBuf[0] << endl;
                             // cout << "read a char" << endl;
                         }
 
@@ -293,8 +293,8 @@ main(int argc, char *argv[]) {
                         // send the end of file packet
                         cout << "sent end of file packet" << endl;
                         c150debug->printf(C150APPLICATION,"%s: end of file", argv[0]);
-                        cout << "currPacketSize: " << currPacketSize << endl;
-                        sendPacket(to_string(currPacketSize), ENDOFFILE, currFileNum, sock, -1);
+                        // cout << "currPacketSize: " << currPacketSize << endl;
+                        sendPacket(to_string(counter % 400), ENDOFFILE, currFileNum, sock, -1);
                     }
                     bool receivedSend5Packets = false;
                     // listen for the message to send 5 extra packets
@@ -304,7 +304,7 @@ main(int argc, char *argv[]) {
                         sock->read(tmpServerMsg, sizeof(struct Packet));
                          if (sock -> timedout()) {
                             if (endOfFile) {
-                                sendPacket(to_string(currPacketSize), ENDOFFILE, currFileNum, sock, -1);
+                                sendPacket(to_string(counter % 400), ENDOFFILE, currFileNum, sock, -1);
 
                             } 
                             else {
