@@ -249,6 +249,9 @@ main(int argc, char *argv[]) {
                 while (!isFileOpenConfirmReceived) {
                     sendPacket(string(sourceFile->d_name), SENDFILENAME, currFileNum, sock, -1);
                     sock->read(tmpFileOpenConfirmMsg, sizeof(struct Packet));
+                    if(sock->timedout()) {
+                        continue;
+                    }
                     Packet *serverFileOpenPacket;
                     serverFileOpenPacket = (Packet*)tmpFileOpenConfirmMsg;
     
@@ -268,21 +271,26 @@ main(int argc, char *argv[]) {
                 //  char tmpBuf[1];
                 char buffer[400];
                 char tmpBuf[] = "\0";
-                
+                int counter = 0;
                 //  int currPacketSize = 0;
-                 int counter = 0;
                  
-                //  cout << "started reading file" << endl;
-                long int lastFPosition = F->ftell();
                 while (!endOfFile) {
                         while((F->fread(tmpBuf, 1, 1) != 0 and counter <= 2000)) {
+                            char prevChar = tmpBuf[0];
+                            int numSameReads = 0;
 
-                            if(lastFPosition == F->ftell()) {
-                                cout << "read x: " << (int)tmpBuf[0] << endl;
-                                continue;
+                            while(numSameReads != 20) {
+                                F->fseek(-1, SEEK_CUR);
+                                F->fread(tmpBuf, 1, 1);
+                                if(prevChar == tmpBuf[0]) {
+                                    numSameReads++;
+                                }
+                                else {
+                                    numSameReads = 0;
+                                }
+                                prevChar = tmpBuf[0];
                             }
-                         
-                        //    cout << "adding read char to buffer:" << endl;
+
                             buffer[counter % 400] = tmpBuf[0];
                             // cout << "added char to buffer:" << endl;
                             counter++;
@@ -304,7 +312,7 @@ main(int argc, char *argv[]) {
                                 }
                             }
 
-                            lastFPosition = F->ftell();
+                            // lastFPosition = F->ftell();
                         }
 
                     if(F->feof() != 0) {

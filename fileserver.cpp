@@ -262,6 +262,8 @@ main(int argc, char *argv[])
                              *GRADING << "File: " << fileNameString << " end-to-end check failed" << endl;
                              //TODO: tell the client to resend the file, and delete local .tmp
                             incrementFileNum = false;
+                            // string pause;
+                            // cin >> pause;
                              break;
                              
                          }
