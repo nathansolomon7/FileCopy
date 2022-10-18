@@ -171,7 +171,10 @@ main(int argc, char *argv[]) {
     ///
     // FILE* f;
     char tmpFileOpenConfirmMsg[sizeof(struct Packet)];
-    
+    char tmpServerMsg[sizeof(struct Packet)];
+    char tmpserverConfirmation[sizeof(struct Packet)];
+    char tmpENDServerConfirmation[sizeof(struct Packet)];
+
     ///
     
     fileCheckResults.open("fileCheckResults.txt");
@@ -214,7 +217,6 @@ main(int argc, char *argv[]) {
             //  cout << "file #" << currFileNum <<" in directory" << endl;
             path = srcdir + "/" + sourceFile->d_name;
             // cout << "path: " << path << endl;
-            F->fopen((const char*)path.c_str(), "r");
             // f = fopen((const char*)path.c_str(), "r");
             // cout << "test 1" << endl;
             t = new ifstream(path);
@@ -232,6 +234,7 @@ main(int argc, char *argv[]) {
             bool isFileSendRetry = true;
             bool isEndToEndFailed = false;
             while (isFileSendRetry) {
+                F->fopen((const char*)path.c_str(), "r");
 
                 // 2.
                 //send the file to the server, wait for its response of the hash code of the file that it just read.
@@ -270,15 +273,15 @@ main(int argc, char *argv[]) {
                  int counter = 0;
                  
                 //  cout << "started reading file" << endl;
+                long int lastFPosition = F->ftell();
                 while (!endOfFile) {
                         while((F->fread(tmpBuf, 1, 1) != 0 and counter <= 2000)) {
-                            // printf("%c", tmpBuf[0]);
-                            // could change the read logic to do a read up here then do a check to see if 
-                            // we are now at EOF then break and set endOfFile to true 
-                            // currPacketSize++;
-                            // if(fileName == "data10") {
-                            //     cout << "sBuffer: " << string(buffer) << endl;
-                            // }
+
+                            if(lastFPosition == F->ftell()) {
+                                cout << "read x: " << (int)tmpBuf[0] << endl;
+                                continue;
+                            }
+                         
                         //    cout << "adding read char to buffer:" << endl;
                             buffer[counter % 400] = tmpBuf[0];
                             // cout << "added char to buffer:" << endl;
@@ -300,11 +303,8 @@ main(int argc, char *argv[]) {
                                     break;
                                 }
                             }
-                            // memory leak happening here?
-                            
-                            // cout << "HI" << endl;
-                            // cout << (int)tmpBuf[0] << endl;
-                            // cout << "read a char" << endl;
+
+                            lastFPosition = F->ftell();
                         }
 
                     if(F->feof() != 0) {
@@ -324,7 +324,6 @@ main(int argc, char *argv[]) {
                     // listen for the message to send 5 extra packets
                     while (!receivedSend5Packets) {
                         // listen for a SENDPACKETS message
-                        char tmpServerMsg[sizeof(struct Packet)];
                         sock->read(tmpServerMsg, sizeof(struct Packet));
                          if (sock -> timedout()) {
                             if (endOfFile) {
@@ -374,7 +373,6 @@ main(int argc, char *argv[]) {
                 
                     while(!isEndToEndFailed) {
                         // cout << "waiting for confirmation" << endl;
-                        char tmpserverConfirmation[sizeof(struct Packet)];
                         readlen = sock -> read(tmpserverConfirmation, sizeof(struct Packet));
 
                         if(sock -> timedout()) {
@@ -404,8 +402,8 @@ main(int argc, char *argv[]) {
                             break;
                         }
                     }
+                F->fclose();
             }
-            F->fclose();
             // fclose(f);
             delete t;
             delete sBuffer;   
@@ -415,7 +413,6 @@ main(int argc, char *argv[]) {
         sendPacket(sampleMsg, ENDOFDIR, 0, sock, -1);
         bool isResetConfirmed = false;
         while(!isResetConfirmed) {
-            char tmpENDServerConfirmation[sizeof(struct Packet)];
             readlen = sock -> read(tmpENDServerConfirmation, sizeof(struct Packet));
             if(sock -> timedout()) {
                 sendPacket(sampleMsg, ENDOFDIR, 0, sock, -1);
