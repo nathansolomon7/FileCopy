@@ -1,9 +1,11 @@
+
 #include "c150nastydgmsocket.h"
 #include "c150debug.h"
 #include <fstream>
 #include <cstdlib> 
 #include <dirent.h>
 #include <openssl/sha.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "c150grading.h"
@@ -115,14 +117,18 @@ main(int argc, char *argv[])
             // it receives a status update (SUCCESS OR FAILURE
              // skip the . and .. names
             int currFileNum = 0;
+            bool incrementFileNum = true;
             while(1) {
-            currFileNum++;
+                if (incrementFileNum) {
+                    currFileNum++;
+                }
             cout << "currFileNum: " << currFileNum << endl;
             bool isFileRecieved = false;
             bool isStatusReceived = false;
             string fileNameString;
             string filePath;
             while(!isFileRecieved) {
+                incrementFileNum = true;
                 
                 char tmpFileNamePacket[sizeof(struct Packet)];
                 Packet *fileNamePacket = (Packet*)tmpFileNamePacket;
@@ -247,12 +253,18 @@ main(int argc, char *argv[])
                     }
                    else {
                          isStatusReceived = true;
-                        //  if(statusString == "success") {
-                        //      *GRADING << "File: " << fileNameString << " end-to-end check succeeded" << endl;
-                        //  }
-                        //  else {
-                        //      *GRADING << "File: " << fileNameString << " end-to-end check failed" << endl;
-                        //  }
+                         if(statusString == "success") {
+                             *GRADING << "File: " << fileNameString << " end-to-end check succeeded" << endl;
+                             //TODO: rename the files we opened and copied to and remove the .tmp
+                             rename(filePath.c_str(), filePath.substr(0, filePath.length() - 4).c_str());
+                         }
+                         else {
+                             *GRADING << "File: " << fileNameString << " end-to-end check failed" << endl;
+                             //TODO: tell the client to resend the file, and delete local .tmp
+                            incrementFileNum = false;
+                             break;
+                             
+                         }
                         // send confirmation of receiving status to client 
                         string serverConfirmationMsg = "server confirmed " + statusString;
                         c150debug->printf(C150APPLICATION,"sending confirmation msg \" %s\"\n", serverConfirmationMsg.c_str());

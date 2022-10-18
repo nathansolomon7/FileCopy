@@ -69,6 +69,8 @@
 #include "c150grading.h"
 #include <unistd.h>
 #include "c150nastyfile.h"
+#include <stdio.h>
+
 // using std::ofstream;
 using namespace std;          // for C++ std library
 using namespace C150NETWORK;  // for all the comp150 utilities 
@@ -102,7 +104,7 @@ struct Packet {
 void checkAndPrintMessage(ssize_t readlen, char *buf, ssize_t bufferlen);
 void setUpDebugLogging(const char *logname, int argc, char *argv[]);
 void checkDirectory(char *dirname);
-void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string fileName, int numRetry, dirent *sourceFile, int fileNum);
+bool compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string fileName, int numRetry, dirent *sourceFile, int fileNum);
 void sendPacket(string data, Step currStep, int fileNum, C150DgmSocket* sock, int order);
 Packet makePacket(char* dataArr, Step currStep, int fileNum, int order);
 
@@ -165,6 +167,7 @@ main(int argc, char *argv[]) {
     ifstream *t;
     stringstream *sBuffer;
     char hashVal[20];
+    string globalReadMessageString;
     ///
     // FILE* f;
     char tmpFileOpenConfirmMsg[sizeof(struct Packet)];
@@ -227,6 +230,7 @@ main(int argc, char *argv[]) {
             }
             // get rid of this loop?
             bool isFileSendRetry = true;
+            bool isEndToEndFailed = false;
             while (isFileSendRetry) {
 
                 // 2.
@@ -248,6 +252,11 @@ main(int argc, char *argv[]) {
                     if(serverFileOpenPacket->currStep == CONFIRMFILENAME and serverFileOpenPacket->fileNum == currFileNum) {
                         isFileOpenConfirmReceived = true;
                     }
+
+                    //TODO: if we get a hashcode from server, send status (this  is because server never got the status packet from befeore and we just jumped up here)
+                    if(serverFileOpenPacket->currStep == HASHCODE and serverFileOpenPacket->fileNum == currFileNum and isEndToEndFailed) {
+                        compareHashCodes(clientHashVal, (char*)globalReadMessageString.c_str(), sock, string(sourceFile->d_name), 1, sourceFile, currFileNum);
+                    }
                 }
                 // after we get a confirmation of server opening the file:
                 // send 5 packets
@@ -255,7 +264,7 @@ main(int argc, char *argv[]) {
                  string serverHashCode;
                 //  char tmpBuf[1];
                 char buffer[400];
-    char tmpBuf[] = "\0";
+                char tmpBuf[] = "\0";
                 
                 //  int currPacketSize = 0;
                  int counter = 0;
@@ -310,6 +319,7 @@ main(int argc, char *argv[]) {
                         // cout << "currPacketSize: " << currPacketSize << endl;
                         sendPacket(to_string(counter % 400), ENDOFFILE, currFileNum, sock, -1);
                     }
+                    
                     bool receivedSend5Packets = false;
                     // listen for the message to send 5 extra packets
                     while (!receivedSend5Packets) {
@@ -334,6 +344,7 @@ main(int argc, char *argv[]) {
                         string readMessageString(readMessage);
                         cleanString(readMessageString);
                         serverHashCode = readMessageString;
+                        globalReadMessageString = readMessageString;
                         if (serverFileOpenPacket->currStep == SEND5PACKETS and serverFileOpenPacket->fileNum == currFileNum) {
                             if (string(serverFileOpenPacket->data) != "Send NEXT 5") {
                                  F->fseek(-2000, SEEK_CUR);
@@ -344,8 +355,13 @@ main(int argc, char *argv[]) {
                         if(endOfFile and serverFileOpenPacket->currStep == HASHCODE and serverFileOpenPacket->fileNum == currFileNum) {
                             // cout << "hash code received from server" << endl;
                             receivedSend5Packets = true;
-                            compareHashCodes(clientHashVal, (char*)readMessageString.c_str(), sock, string(sourceFile->d_name), 1, sourceFile, currFileNum);
-                            isFileSendRetry = false;
+                            // cout << "about to compare" << endl;
+                            if (!compareHashCodes(clientHashVal, (char*)readMessageString.c_str(), sock, string(sourceFile->d_name), 1, sourceFile, currFileNum)) {
+                                isEndToEndFailed = true;
+                                // cout << "was wrong" << endl;
+                            } else {
+                                isFileSendRetry = false;
+                            }
                         }
                     }
                 }
@@ -355,7 +371,8 @@ main(int argc, char *argv[]) {
                 c150debug->printf(C150APPLICATION,"%s: reading server confirmation:", argv[0]);
                 // read hash code from server
                 int numRetries = 0;
-                    while(1) {
+                
+                    while(!isEndToEndFailed) {
                         // cout << "waiting for confirmation" << endl;
                         char tmpserverConfirmation[sizeof(struct Packet)];
                         readlen = sock -> read(tmpserverConfirmation, sizeof(struct Packet));
@@ -445,7 +462,7 @@ main(int argc, char *argv[]) {
 //
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
  // TODO: implement the proper num retry
-void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string currFile, int numRetry, dirent *sourceFile, int currFileNum) {
+bool compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string currFile, int numRetry, dirent *sourceFile, int currFileNum) {
     if(string(serverHashCode) == clientHashCode) {
         // cout << string(serverHashCode) << " == " << clientHashCode << endl;
         fileCheckResults << "==" << endl;
@@ -455,14 +472,16 @@ void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket
         c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", "fileclient", SUCCESS.c_str());
         string statusMessage = SUCCESS;
         sendPacket(SUCCESS, SENDSTATUS, currFileNum, sock, -1);
+        return true;
     }
     else {
         // cout << string(serverHashCode) << " != " << clientHashCode << endl;
-        cout << "!=" << endl;
-        fileCheckResults << "!=" << endl;
+        // cout << "!=" << endl;
+        // fileCheckResults << "!=" << endl;
         // *GRADING << "File: " << currFile << " end-to-end check failed, attempt " << numRetry << endl;
         c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", "fileclient", FAILURE.c_str());
         sendPacket(FAILURE, SENDSTATUS, currFileNum, sock, -1);
+        return false;
     }
      
 }
