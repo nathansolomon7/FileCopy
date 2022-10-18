@@ -1,4 +1,3 @@
-
 #include "c150nastydgmsocket.h"
 #include "c150debug.h"
 #include <fstream>
@@ -150,7 +149,7 @@ main(int argc, char *argv[])
                 }
                 
                 isFileRecieved = true;
-                cout << "file name received from client" << endl;
+                // cout << "file name received from client" << endl;
                 // create the file
                 filePath = targetDirectory + "/" + fileNameString + ".tmp";
                 // FILE* currFile = fopen((const char*)filePath.c_str(), "w");
@@ -169,10 +168,14 @@ main(int argc, char *argv[])
                 int packetCount = 0;
                 char buffer[2000];
                 bool all5LastPacket = false;
+                int counter = 0;
                 while (!endOfFile) {
                     char tmpCurrFile[sizeof(struct Packet)];
-                    sock->read(tmpCurrFile, sizeof(struct Packet));
+                    // sock->read(tmpCurrFile, sizeof(struct Packet));
                     Packet *dataPacket = (Packet*)tmpCurrFile;
+                    string dataPacketData = readMessage(tmpCurrFile, dataPacket, sock);
+                    cout << "A packet has been read: " << counter << endl;
+                    counter ++;
                     // if the client did not get the confirmation of server opening the file
                     if (dataPacket->currStep == SENDFILENAME and dataPacket->fileNum == currFileNum) {
                         // resend the confirmation
@@ -185,7 +188,7 @@ main(int argc, char *argv[])
                     }
                     if (dataPacket->currStep == COPYFILE and dataPacket->fileNum == currFileNum) {
                         //append the current packet to the buffer
-                        cout << "received data packet" << endl;
+                        cout << "received COPYFILE packet" << endl;
                          memcpy((void*)(buffer + (packetCount * 400)), dataPacket->data, 400);
                         packetCount++;
                     }
@@ -208,14 +211,14 @@ main(int argc, char *argv[])
                         cout << "received end of file packet" << endl;
                         // add the 1-5 packets to the File
                         //TODO: check if we have <= 5 packets
-                         string sizeofLastPacket = readMessage(tmpCurrFile, dataPacket, sock);
-                         cout << "sizeofLastPacket: " << sizeofLastPacket << endl;
+                        //  string sizeofLastPacket = readMessage(tmpCurrFile, dataPacket, sock); // FIXME: remove this
+                        //  cout << "sizeofLastPacket: " << sizeofLastPacket << endl;
                         //  cout << "stoi(sizeofLastPacket): " << stoi(sizeofLastPacket) << endl;
-                        cout << "buffer: " << string(buffer) << endl;
-                        cout << "buffer size: " << strlen(buffer) << endl;
-                        cout << "(packetCount - 1 * 400) + stoi(sizeofLastPacket): " << ((packetCount - 1) * 400) + stoi(sizeofLastPacket)<< endl;
-                        cout << "packetCount: " << packetCount << endl;
-                        F->fwrite(buffer, 1, ((packetCount - 1) * 400) + stoi(sizeofLastPacket));
+                        // cout << "buffer: " << string(buffer) << endl;
+                        // cout << "buffer size: " << strlen(buffer) << endl;
+                        // cout << "(packetCount - 1 * 400) + stoi(sizeofLastPacket): " << ((packetCount - 1) * 400) + stoi(sizeofLastPacket)<< endl;
+                        // cout << "packetCount: " << packetCount << endl;
+                        F->fwrite(buffer, 1, ((packetCount - 1) * 400) + stoi(dataPacketData));
                     }
                 }
                 F->fclose();
@@ -224,6 +227,7 @@ main(int argc, char *argv[])
                 // with itself which may or may not be wrong 
             }
                 //  string tmpFileName = fileNameString + ".tmp";
+                cout << "CREAT HASHCODE " << endl;
                  createHashCode(filePath, sock, targetDirectory, currFileNum);
                 //wait for status response from client
                 while(!isStatusReceived) {

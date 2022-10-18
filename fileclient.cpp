@@ -163,8 +163,13 @@ main(int argc, char *argv[]) {
     string clientHashVal = "";
     unsigned char obuf[20];
     ifstream *t;
-    stringstream *buffer;
+    stringstream *sBuffer;
     char hashVal[20];
+    ///
+    // FILE* f;
+    char tmpFileOpenConfirmMsg[sizeof(struct Packet)];
+    
+    ///
     
     fileCheckResults.open("fileCheckResults.txt");
     //
@@ -203,16 +208,17 @@ main(int argc, char *argv[]) {
                  continue;  
             }
             currFileNum++;
-             cout << "file #" << currFileNum <<" in directory" << endl;
+            //  cout << "file #" << currFileNum <<" in directory" << endl;
             path = srcdir + "/" + sourceFile->d_name;
-            cout << "path: " << path << endl;
+            // cout << "path: " << path << endl;
             F->fopen((const char*)path.c_str(), "r");
-            cout << "test 1" << endl;
+            // f = fopen((const char*)path.c_str(), "r");
+            // cout << "test 1" << endl;
             t = new ifstream(path);
-            buffer = new stringstream;
-            *buffer << t->rdbuf();
-            SHA1((const unsigned char *)buffer->str().c_str(), (buffer->str()).length(), obuf);
-            cout << "current file being hashed: " << string(sourceFile->d_name) << endl;
+            sBuffer = new stringstream;
+            *sBuffer << t->rdbuf();
+            SHA1((const unsigned char *)sBuffer->str().c_str(), (sBuffer->str()).length(), obuf);
+            cout << "\n current file being hashed: " << string(sourceFile->d_name) << endl;
             for (int i = 0; i < 20; i++)
             {
                 sprintf(hashVal,"%02x",(unsigned int) obuf[i]);
@@ -230,14 +236,14 @@ main(int argc, char *argv[]) {
              
                 string fileName = string(sourceFile->d_name);
                 // const char* fakeFileSendArr = fakeFileSend.c_str();
-                c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", argv[0], fileName.c_str());
+                c150debug->printf(C150APPLICATION,"\n%s: Writing message: \"%s\"", argv[0], fileName.c_str());
                 
                 bool isFileOpenConfirmReceived = false;
                 while (!isFileOpenConfirmReceived) {
                     sendPacket(string(sourceFile->d_name), SENDFILENAME, currFileNum, sock, -1);
-                    char tmpFileOpenConfirmMsg[sizeof(struct Packet)];
                     sock->read(tmpFileOpenConfirmMsg, sizeof(struct Packet));
-                    Packet *serverFileOpenPacket = (Packet*)tmpFileOpenConfirmMsg;
+                    Packet *serverFileOpenPacket;
+                    serverFileOpenPacket = (Packet*)tmpFileOpenConfirmMsg;
     
                     if(serverFileOpenPacket->currStep == CONFIRMFILENAME and serverFileOpenPacket->fileNum == currFileNum) {
                         isFileOpenConfirmReceived = true;
@@ -247,19 +253,22 @@ main(int argc, char *argv[]) {
                 // send 5 packets
                  bool endOfFile = false;
                  string serverHashCode;
-                 char tmpBuf[1];
+                //  char tmpBuf[1];
+                char buffer[400];
+    char tmpBuf[] = "\0";
+                
                 //  int currPacketSize = 0;
                  int counter = 0;
-                 char buffer[400];
-                 F->fread(tmpBuf, 1, 1);
+                 
+                //  cout << "started reading file" << endl;
                 while (!endOfFile) {
-            
-                        while((F->feof() == 0 and counter <= 2000)) {
+                        while((F->fread(tmpBuf, 1, 1) != 0 and counter <= 2000)) {
+                            // printf("%c", tmpBuf[0]);
                             // could change the read logic to do a read up here then do a check to see if 
                             // we are now at EOF then break and set endOfFile to true 
                             // currPacketSize++;
                             // if(fileName == "data10") {
-                            //     cout << "buffer: " << string(buffer) << endl;
+                            //     cout << "sBuffer: " << string(buffer) << endl;
                             // }
                         //    cout << "adding read char to buffer:" << endl;
                             buffer[counter % 400] = tmpBuf[0];
@@ -268,20 +277,23 @@ main(int argc, char *argv[]) {
                             // cout << "counter: " << counter << endl;
                             // send a packet every 400 bytes
                             if ((counter % 400) == 0) {
+                                c150debug->printf(C150APPLICATION,"%s: sending SINGLE packets", argv[0]);
                                 sendPacket(string(buffer), COPYFILE, currFileNum, sock, -1);
-                                cout << "sent packet" << endl;
+                                // cout << "sent packet" << endl;
                                 // currPacketSize = 0;
                                 // cout << "post sending packet" << endl;
                                 if (counter == 2000) {
                                     counter = 0;
-                                    cout << "sent 5 packets" << endl;
+                                    // cout << "SENT FIVE PACKETS" << endl;
+                                    c150debug->printf(C150APPLICATION,"%s: sending 5 packets", argv[0]);
+
                                     sendPacket("sent 5 packets", ALL5PACKETS, currFileNum, sock, -1);
-                                     break;
+                                    break;
                                 }
                             }
                             // memory leak happening here?
-                            // cout << "mem leak happenging now:" << endl;
-                            F->fread(tmpBuf, 1, 1);
+                            
+                            // cout << "HI" << endl;
                             // cout << (int)tmpBuf[0] << endl;
                             // cout << "read a char" << endl;
                         }
@@ -289,10 +301,12 @@ main(int argc, char *argv[]) {
                     if(F->feof() != 0) {
                         endOfFile = true;
                         
+                        c150debug->printf(C150APPLICATION,"%s: sending last end of file packet", argv[0]);
                         sendPacket(string(buffer), COPYFILE, currFileNum, sock, -1);
                         // send the end of file packet
-                        cout << "sent end of file packet" << endl;
-                        c150debug->printf(C150APPLICATION,"%s: end of file", argv[0]);
+                        // cout << "sent end of file packet" << endl;  
+                        
+                        c150debug->printf(C150APPLICATION,"%s: sending end of file", argv[0]);
                         // cout << "currPacketSize: " << currPacketSize << endl;
                         sendPacket(to_string(counter % 400), ENDOFFILE, currFileNum, sock, -1);
                     }
@@ -323,11 +337,12 @@ main(int argc, char *argv[]) {
                         if (serverFileOpenPacket->currStep == SEND5PACKETS and serverFileOpenPacket->fileNum == currFileNum) {
                             if (string(serverFileOpenPacket->data) != "Send NEXT 5") {
                                  F->fseek(-2000, SEEK_CUR);
+                                //  fseek(f, -2000, SEEK_CUR);
                             }
                             receivedSend5Packets = true;
                         }
                         if(endOfFile and serverFileOpenPacket->currStep == HASHCODE and serverFileOpenPacket->fileNum == currFileNum) {
-                            cout << "hash code received from server" << endl;
+                            // cout << "hash code received from server" << endl;
                             receivedSend5Packets = true;
                             compareHashCodes(clientHashVal, (char*)readMessageString.c_str(), sock, string(sourceFile->d_name), 1, sourceFile, currFileNum);
                             isFileSendRetry = false;
@@ -374,8 +389,9 @@ main(int argc, char *argv[]) {
                     }
             }
             F->fclose();
+            // fclose(f);
             delete t;
-            delete buffer;   
+            delete sBuffer;   
         }
        // ending packet send here
         string sampleMsg = "ENDOFDIR";
@@ -431,7 +447,7 @@ main(int argc, char *argv[]) {
  // TODO: implement the proper num retry
 void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string currFile, int numRetry, dirent *sourceFile, int currFileNum) {
     if(string(serverHashCode) == clientHashCode) {
-        cout << string(serverHashCode) << " == " << clientHashCode << endl;
+        // cout << string(serverHashCode) << " == " << clientHashCode << endl;
         fileCheckResults << "==" << endl;
         cout << "==" << endl;
         // 3. send confirmation message to server. 
@@ -441,7 +457,7 @@ void compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket
         sendPacket(SUCCESS, SENDSTATUS, currFileNum, sock, -1);
     }
     else {
-        cout << string(serverHashCode) << " != " << clientHashCode << endl;
+        // cout << string(serverHashCode) << " != " << clientHashCode << endl;
         cout << "!=" << endl;
         fileCheckResults << "!=" << endl;
         // *GRADING << "File: " << currFile << " end-to-end check failed, attempt " << numRetry << endl;
@@ -455,7 +471,7 @@ void sendPacket(string data, Step currStep, int fileNum, C150DgmSocket* sock, in
         Packet newPacket = makePacket((char*)data.c_str(), currStep, fileNum, order);
         char * newPacketArr = (char *)&newPacket;
         sock -> write(newPacketArr, sizeof(newPacket)); 
-        cout << "finished writing to socket" << endl;
+        // cout << "finished writing to socket" << endl;
 }
 
 void
