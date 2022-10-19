@@ -70,6 +70,7 @@
 #include <unistd.h>
 #include "c150nastyfile.h"
 #include <stdio.h>
+#include <math.h>
 
 // using std::ofstream;
 using namespace std;          // for C++ std library
@@ -97,6 +98,7 @@ struct Packet {
     Step currStep;
     int fileNum;
     int order;
+    int dataSize;
 };
 
 
@@ -105,8 +107,8 @@ void checkAndPrintMessage(ssize_t readlen, char *buf, ssize_t bufferlen);
 void setUpDebugLogging(const char *logname, int argc, char *argv[]);
 void checkDirectory(char *dirname);
 bool compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string fileName, int numRetry, dirent *sourceFile, int fileNum);
-void sendPacket(string data, Step currStep, int fileNum, C150DgmSocket* sock, int order);
-Packet makePacket(char* dataArr, Step currStep, int fileNum, int order);
+void sendPacket(string data, Step currStep, int fileNum, C150DgmSocket* sock, int order, int dataSize);
+Packet makePacket(char* dataArr, Step currStep, int fileNum, int order, int dataSize);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 //
@@ -247,7 +249,7 @@ main(int argc, char *argv[]) {
                 
                 bool isFileOpenConfirmReceived = false;
                 while (!isFileOpenConfirmReceived) {
-                    sendPacket(string(sourceFile->d_name), SENDFILENAME, currFileNum, sock, -1);
+                    sendPacket(string(sourceFile->d_name), SENDFILENAME, currFileNum, sock, -1, -1);
                     sock->read(tmpFileOpenConfirmMsg, sizeof(struct Packet));
                     if(sock->timedout()) {
                         continue;
@@ -275,6 +277,7 @@ main(int argc, char *argv[]) {
                 //  int currPacketSize = 0;
                  
                 while (!endOfFile) {
+                    // cout << "at start of endOfFile loop" << endl;
                         while((F->fread(tmpBuf, 1, 1) != 0 and counter <= 2000)) {
                             char prevChar = tmpBuf[0];
                             int numSameReads = 0;
@@ -298,7 +301,7 @@ main(int argc, char *argv[]) {
                             // send a packet every 400 bytes
                             if ((counter % 400) == 0) {
                                 c150debug->printf(C150APPLICATION,"%s: sending SINGLE packets", argv[0]);
-                                sendPacket(string(buffer), COPYFILE, currFileNum, sock, -1);
+                                sendPacket(string(buffer), COPYFILE, currFileNum, sock, -1, -1);
                                 // cout << "sent packet" << endl;
                                 // currPacketSize = 0;
                                 // cout << "post sending packet" << endl;
@@ -307,7 +310,7 @@ main(int argc, char *argv[]) {
                                     // cout << "SENT FIVE PACKETS" << endl;
                                     c150debug->printf(C150APPLICATION,"%s: sending 5 packets", argv[0]);
 
-                                    sendPacket("sent 5 packets", ALL5PACKETS, currFileNum, sock, -1);
+                                    sendPacket("sent 5 packets", ALL5PACKETS, currFileNum, sock, -1, -1);
                                     break;
                                 }
                             }
@@ -319,13 +322,18 @@ main(int argc, char *argv[]) {
                         endOfFile = true;
                         
                         c150debug->printf(C150APPLICATION,"%s: sending last end of file packet", argv[0]);
-                        sendPacket(string(buffer), COPYFILE, currFileNum, sock, -1);
+                        
+                        // sendPacket(string(buffer), COPYFILE, currFileNum, sock, -1);
+
                         // send the end of file packet
                         // cout << "sent end of file packet" << endl;  
                         
                         c150debug->printf(C150APPLICATION,"%s: sending end of file", argv[0]);
                         // cout << "currPacketSize: " << currPacketSize << endl;
-                        sendPacket(to_string(counter % 400), ENDOFFILE, currFileNum, sock, -1);
+                        c150debug->printf(C150APPLICATION, "counter: %d", counter);
+                        int packetNum = ceil(counter / 400);
+
+                        sendPacket(string(buffer), ENDOFFILE, currFileNum, sock, packetNum, counter % 400);
                     }
                     
                     bool receivedSend5Packets = false;
@@ -335,11 +343,12 @@ main(int argc, char *argv[]) {
                         sock->read(tmpServerMsg, sizeof(struct Packet));
                          if (sock -> timedout()) {
                             if (endOfFile) {
-                                sendPacket(to_string(counter % 400), ENDOFFILE, currFileNum, sock, -1);
+                                // TODO:
+                                sendPacket(string(buffer), ENDOFFILE, currFileNum, sock, -1, counter % 400);
 
                             } 
                             else {
-                                sendPacket("sent 5 packets", ALL5PACKETS, currFileNum, sock, -1);
+                                sendPacket("sent 5 packets", ALL5PACKETS, currFileNum, sock, -1, -1);
                             }
                             continue;
                          }
@@ -352,6 +361,16 @@ main(int argc, char *argv[]) {
                         cleanString(readMessageString);
                         serverHashCode = readMessageString;
                         globalReadMessageString = readMessageString;
+
+                        if(endOfFile and serverFileOpenPacket->currStep == SEND5PACKETS and serverFileOpenPacket->fileNum == currFileNum) {
+                            cout << "resending the last packets" << endl;
+                            // cout << "serverFileOpenPacket->order: " << serverFileOpenPacket->order << endl;
+                            F->fseek((counter * -1), SEEK_CUR);
+                            counter = 0;
+                            endOfFile = false;
+                            break;
+                        }
+
                         if (serverFileOpenPacket->currStep == SEND5PACKETS and serverFileOpenPacket->fileNum == currFileNum) {
                             if (string(serverFileOpenPacket->data) != "Send NEXT 5") {
                                  F->fseek(-2000, SEEK_CUR);
@@ -418,12 +437,12 @@ main(int argc, char *argv[]) {
         }
        // ending packet send here
         string sampleMsg = "ENDOFDIR";
-        sendPacket(sampleMsg, ENDOFDIR, 0, sock, -1);
+        sendPacket(sampleMsg, ENDOFDIR, 0, sock, -1, -1);
         bool isResetConfirmed = false;
         while(!isResetConfirmed) {
             readlen = sock -> read(tmpENDServerConfirmation, sizeof(struct Packet));
             if(sock -> timedout()) {
-                sendPacket(sampleMsg, ENDOFDIR, 0, sock, -1);
+                sendPacket(sampleMsg, ENDOFDIR, 0, sock, -1, -1);
                 continue;
             }
             else {
@@ -476,7 +495,7 @@ bool compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket
         // *GRADING << "File: " << currFile << " end-to-end check succeeded, attempt " << numRetry << endl;
         c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", "fileclient", SUCCESS.c_str());
         string statusMessage = SUCCESS;
-        sendPacket(SUCCESS, SENDSTATUS, currFileNum, sock, -1);
+        sendPacket(SUCCESS, SENDSTATUS, currFileNum, sock, -1, -1);
         return true;
     }
     else {
@@ -485,14 +504,14 @@ bool compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket
         // fileCheckResults << "!=" << endl;
         // *GRADING << "File: " << currFile << " end-to-end check failed, attempt " << numRetry << endl;
         c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", "fileclient", FAILURE.c_str());
-        sendPacket(FAILURE, SENDSTATUS, currFileNum, sock, -1);
+        sendPacket(FAILURE, SENDSTATUS, currFileNum, sock, -1, -1);
         return false;
     }
      
 }
 
-void sendPacket(string data, Step currStep, int fileNum, C150DgmSocket* sock, int order) {
-        Packet newPacket = makePacket((char*)data.c_str(), currStep, fileNum, order);
+void sendPacket(string data, Step currStep, int fileNum, C150DgmSocket* sock, int order, int dataSize) {
+        Packet newPacket = makePacket((char*)data.c_str(), currStep, fileNum, order, dataSize);
         char * newPacketArr = (char *)&newPacket;
         sock -> write(newPacketArr, sizeof(newPacket)); 
         // cout << "finished writing to socket" << endl;
@@ -636,12 +655,12 @@ checkDirectory(char *dirname) {
   }
 }
 
-Packet makePacket(char* dataArr, Step currStep, int fileNum, int order) {
+Packet makePacket(char* dataArr, Step currStep, int fileNum, int order, int dataSize) {
     Packet newPacket;
-    // newPacket.data = data;
     memcpy(newPacket.data, dataArr, strlen(dataArr) + 1);
     newPacket.currStep = currStep;
     newPacket.fileNum = fileNum;
     newPacket.order = order;
+    newPacket.dataSize = dataSize;
     return newPacket;
 }
