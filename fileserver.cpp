@@ -252,7 +252,7 @@ main(int argc, char *argv[])
 
                         if (packetCount != dataPacket->order) {
                             sendPacket("Resend end of file packets", SEND5PACKETS, currFileNum, sock, dataPacket->order);
-
+                            all5LastPacket = true;
                             continue;
                         }
                         endOfFile = true;

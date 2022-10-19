@@ -277,6 +277,7 @@ main(int argc, char *argv[]) {
                 //  int currPacketSize = 0;
                  
                 while (!endOfFile) {
+                    // cout << "at start of endOfFile loop" << endl;
                         while((F->fread(tmpBuf, 1, 1) != 0 and counter <= 2000)) {
                             char prevChar = tmpBuf[0];
                             int numSameReads = 0;
@@ -331,9 +332,6 @@ main(int argc, char *argv[]) {
                         // cout << "currPacketSize: " << currPacketSize << endl;
                         c150debug->printf(C150APPLICATION, "counter: %d", counter);
                         int packetNum = ceil(counter / 400);
-                        // if (packetNum == 0) {
-                        //     packetNum = 5;
-                        // }
 
                         sendPacket(string(buffer), ENDOFFILE, currFileNum, sock, packetNum, counter % 400);
                     }
@@ -365,8 +363,11 @@ main(int argc, char *argv[]) {
                         globalReadMessageString = readMessageString;
 
                         if(endOfFile and serverFileOpenPacket->currStep == SEND5PACKETS and serverFileOpenPacket->fileNum == currFileNum) {
-                            F->fseek((serverFileOpenPacket->order * 400) * -1, SEEK_CUR);
+                            cout << "resending the last packets" << endl;
+                            // cout << "serverFileOpenPacket->order: " << serverFileOpenPacket->order << endl;
+                            F->fseek((counter * -1), SEEK_CUR);
                             counter = 0;
+                            endOfFile = false;
                             break;
                         }
 
