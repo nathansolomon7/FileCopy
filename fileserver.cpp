@@ -33,6 +33,7 @@ struct Packet {
     Step currStep;
     int fileNum;
     int order;
+    int dataSize;
 };
  string SUCCESS = "success";
  string FAILURE = "failure";
@@ -63,7 +64,12 @@ main(int argc, char *argv[])
     DIR *TARGET;                // Unix descriptor for target
     // struct dirent *targetFile;  // Directory entry for source file
 	string builtHashVal = "";
+    ///
+    char tmpFileNamePacket[sizeof(struct Packet)];
+    char tmpCurrFile[sizeof(struct Packet)];
+    char tmpStatusPacket[sizeof(struct Packet)];
 
+    ///
     
     // Check command line and parse arguments
     
@@ -130,7 +136,6 @@ main(int argc, char *argv[])
             while(!isFileRecieved) {
                 incrementFileNum = true;
                 
-                char tmpFileNamePacket[sizeof(struct Packet)];
                 Packet *fileNamePacket = (Packet*)tmpFileNamePacket;
                 string fileNameString = readMessage(tmpFileNamePacket, fileNamePacket, sock);
                 if (fileNamePacket->currStep  == ENDOFDIR) {
@@ -175,8 +180,8 @@ main(int argc, char *argv[])
                 char buffer[2000];
                 bool all5LastPacket = false;
                 int counter = 0;
+                bool isPrevPacketAll5 = false;
                 while (!endOfFile) {
-                    char tmpCurrFile[sizeof(struct Packet)];
                     // sock->read(tmpCurrFile, sizeof(struct Packet));
                     Packet *dataPacket = (Packet*)tmpCurrFile;
                     string dataPacketData = readMessage(tmpCurrFile, dataPacket, sock);
@@ -198,19 +203,31 @@ main(int argc, char *argv[])
                          memcpy((void*)(buffer + (packetCount * 400)), dataPacket->data, 400);
                         packetCount++;
                     }
-
                     if (dataPacket->currStep == ALL5PACKETS and dataPacket->fileNum == currFileNum) {
                         all5LastPacket = true;
-                        if(packetCount == 5) {
+                        if(packetCount == 5 ) { // 
                             //send the client a message to send the next 5
-                             sendPacket("Send NEXT 5", SEND5PACKETS, currFileNum, sock, -1);
+                            // should we send packet count back to 0?
+                            sendPacket("Send NEXT 5", SEND5PACKETS, currFileNum, sock, -1);
                             // add the 5 packets to the File
-                            F->fwrite(buffer, 1, 2000);
-
+                            if(buffer[0] == '\0') {
+                                 c150debug->printf(C150APPLICATION,"null character in buffer");
+                            }
+                            if (!isPrevPacketAll5) {
+                                F->fwrite(buffer, 1, sizeof(buffer));
+                                memset(buffer, 0, 2000);
+                            }
+                      
                         }
-                        else {
+                        // else {
+                        else if (packetCount != 5) {
+                            packetCount = 0;
                             sendPacket("Resend 5", SEND5PACKETS, currFileNum, sock, -1);
                         }
+                        isPrevPacketAll5 = true;
+                    }
+                    else if (dataPacket->currStep != ALL5PACKETS and dataPacket->fileNum == currFileNum) {
+                        isPrevPacketAll5 = false;
                     }
                     if (dataPacket->currStep == ENDOFFILE and dataPacket->fileNum == currFileNum) {
                         endOfFile = true;
@@ -224,7 +241,27 @@ main(int argc, char *argv[])
                         // cout << "buffer size: " << strlen(buffer) << endl;
                         // cout << "(packetCount - 1 * 400) + stoi(sizeofLastPacket): " << ((packetCount - 1) * 400) + stoi(sizeofLastPacket)<< endl;
                         // cout << "packetCount: " << packetCount << endl;
-                        F->fwrite(buffer, 1, ((packetCount - 1) * 400) + stoi(dataPacketData));
+                        // if(&buffer[0] == 0) {
+                        //     c150debug->printf(C150APPLICATION,"null character in buffer");
+                        // }
+                        cout << "size of last packet: " << dataPacket->dataSize << endl;
+                      
+                        if(packetCount != 5) {
+                             memcpy((void*)(buffer + ((packetCount) * 400)), dataPacket->data, dataPacket->dataSize);
+                            cout << "packetCount: " << packetCount << endl;
+                            F->fwrite(buffer, 1, ((packetCount) * 400) + dataPacket->dataSize);
+                        }
+                        else if (dataPacket->dataSize != 0){
+                            //  memcpy((void*)(buffer + ((packetCount - 1) * 400)), dataPacket->data, dataPacket->dataSize);
+                            cout << "packetCount: hi " << packetCount << endl;
+
+                            //  memcpy((void*)(buffer + ((packetCount - 1) * 400)), dataPacket->data, dataPacket->dataSize);
+                            // F->fwrite(buffer, 1, ((packetCount - 1) * 400) + dataPacket->dataSize);
+                            cout << "dataPacket->data: " << string(dataPacket->data) << endl;
+                            F->fwrite(dataPacket->data, 1, dataPacket->dataSize);
+                            
+                        }
+                       
                     }
                 }
                 F->fclose();
@@ -239,7 +276,6 @@ main(int argc, char *argv[])
                 while(!isStatusReceived) {
                     // if you get "a file has been received from the server" message, go back to the top
                     // of this loop 
-                    char tmpStatusPacket[sizeof(struct Packet)];
                     Packet *statusPacket = (Packet*)tmpStatusPacket;
                     
                     string statusString = readMessage(tmpStatusPacket, statusPacket, sock);
@@ -262,8 +298,8 @@ main(int argc, char *argv[])
                              *GRADING << "File: " << fileNameString << " end-to-end check failed" << endl;
                              //TODO: tell the client to resend the file, and delete local .tmp
                             incrementFileNum = false;
-                            // string pause;
-                            // cin >> pause;
+                            string pause;
+                            cin >> pause;
                              break;
                              
                          }
