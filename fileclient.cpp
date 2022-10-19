@@ -70,6 +70,7 @@
 #include <unistd.h>
 #include "c150nastyfile.h"
 #include <stdio.h>
+#include <math.h>
 
 // using std::ofstream;
 using namespace std;          // for C++ std library
@@ -329,8 +330,12 @@ main(int argc, char *argv[]) {
                         c150debug->printf(C150APPLICATION,"%s: sending end of file", argv[0]);
                         // cout << "currPacketSize: " << currPacketSize << endl;
                         c150debug->printf(C150APPLICATION, "counter: %d", counter);
+                        int packetNum = ceil(counter / 400);
+                        // if (packetNum == 0) {
+                        //     packetNum = 5;
+                        // }
 
-                        sendPacket(string(buffer), ENDOFFILE, currFileNum, sock, -1, counter % 400);
+                        sendPacket(string(buffer), ENDOFFILE, currFileNum, sock, packetNum, counter % 400);
                     }
                     
                     bool receivedSend5Packets = false;
@@ -358,6 +363,13 @@ main(int argc, char *argv[]) {
                         cleanString(readMessageString);
                         serverHashCode = readMessageString;
                         globalReadMessageString = readMessageString;
+
+                        if(endOfFile and serverFileOpenPacket->currStep == SEND5PACKETS and serverFileOpenPacket->fileNum == currFileNum) {
+                            F->fseek((serverFileOpenPacket->order * 400) * -1, SEEK_CUR);
+                            counter = 0;
+                            break;
+                        }
+
                         if (serverFileOpenPacket->currStep == SEND5PACKETS and serverFileOpenPacket->fileNum == currFileNum) {
                             if (string(serverFileOpenPacket->data) != "Send NEXT 5") {
                                  F->fseek(-2000, SEEK_CUR);

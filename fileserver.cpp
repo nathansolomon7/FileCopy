@@ -230,7 +230,6 @@ main(int argc, char *argv[])
                         isPrevPacketAll5 = false;
                     }
                     if (dataPacket->currStep == ENDOFFILE and dataPacket->fileNum == currFileNum) {
-                        endOfFile = true;
                         cout << "received end of file packet" << endl;
                         // add the 1-5 packets to the File
                         //TODO: check if we have <= 5 packets
@@ -244,6 +243,19 @@ main(int argc, char *argv[])
                         // if(&buffer[0] == 0) {
                         //     c150debug->printf(C150APPLICATION,"null character in buffer");
                         // }
+                        //if packetcount != dataPacket->packetCount :: resend last packets
+                        if(packetCount == 5) {
+                            packetCount = 0;
+                        }
+                        cout << "packetCount: " << packetCount << endl;
+                        cout << "dataPacket->order: " << dataPacket->order << endl;
+
+                        if (packetCount != dataPacket->order) {
+                            sendPacket("Resend end of file packets", SEND5PACKETS, currFileNum, sock, dataPacket->order);
+
+                            continue;
+                        }
+                        endOfFile = true;
                         cout << "size of last packet: " << dataPacket->dataSize << endl;
                       
                         if(packetCount != 5) {
