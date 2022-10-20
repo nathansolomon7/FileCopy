@@ -282,7 +282,7 @@ main(int argc, char *argv[]) {
                             char prevChar = tmpBuf[0];
                             int numSameReads = 0;
 
-                            while(numSameReads != 20) {
+                            while(numSameReads != 10) {
                                 F->fseek(-1, SEEK_CUR);
                                 F->fread(tmpBuf, 1, 1);
                                 if(prevChar == tmpBuf[0]) {
@@ -301,7 +301,7 @@ main(int argc, char *argv[]) {
                             // send a packet every 400 bytes
                             if ((counter % 400) == 0) {
                                 c150debug->printf(C150APPLICATION,"%s: sending SINGLE packets", argv[0]);
-                                sendPacket(string(buffer), COPYFILE, currFileNum, sock, -1, -1);
+                                sendPacket(string(buffer), COPYFILE, currFileNum, sock, (counter / 400) - 1, -1);
                                 // cout << "sent packet" << endl;
                                 // currPacketSize = 0;
                                 // cout << "post sending packet" << endl;
@@ -362,7 +362,8 @@ main(int argc, char *argv[]) {
                         serverHashCode = readMessageString;
                         globalReadMessageString = readMessageString;
 
-                        if(endOfFile and serverFileOpenPacket->currStep == SEND5PACKETS and serverFileOpenPacket->fileNum == currFileNum) {
+                        
+                        if(endOfFile and serverFileOpenPacket->currStep == SEND5PACKETS and serverFileOpenPacket->fileNum == currFileNum and readMessageString == "Resend end of file packets") {
                             cout << "resending the last packets" << endl;
                             // cout << "serverFileOpenPacket->order: " << serverFileOpenPacket->order << endl;
                             F->fseek((counter * -1), SEEK_CUR);
@@ -371,8 +372,12 @@ main(int argc, char *argv[]) {
                             break;
                         }
 
+                        if(endOfFile and serverFileOpenPacket->currStep == SEND5PACKETS and serverFileOpenPacket->fileNum == currFileNum) {
+                            continue;
+                        }
+
                         if (serverFileOpenPacket->currStep == SEND5PACKETS and serverFileOpenPacket->fileNum == currFileNum) {
-                            if (string(serverFileOpenPacket->data) != "Send NEXT 5") {
+                            if (string(serverFileOpenPacket->data) == "Resend 5") {
                                  F->fseek(-2000, SEEK_CUR);
                                 //  fseek(f, -2000, SEEK_CUR);
                             }

@@ -200,7 +200,8 @@ main(int argc, char *argv[])
                     if (dataPacket->currStep == COPYFILE and dataPacket->fileNum == currFileNum) {
                         //append the current packet to the buffer
                         cout << "received COPYFILE packet" << endl;
-                         memcpy((void*)(buffer + (packetCount * 400)), dataPacket->data, 400);
+
+                         memcpy((void*)(buffer + (dataPacket->order * 400)), dataPacket->data, 400);
                         packetCount++;
                     }
                     if (dataPacket->currStep == ALL5PACKETS and dataPacket->fileNum == currFileNum) {
@@ -277,12 +278,12 @@ main(int argc, char *argv[])
                     }
                 }
                 F->fclose();
-                
                 // for week 1, just compare "fileNameString", which is actually a hash code, 
                 // with itself which may or may not be wrong 
             }
                 //  string tmpFileName = fileNameString + ".tmp";
                 cout << "CREAT HASHCODE " << endl;
+                
                  createHashCode(filePath, sock, targetDirectory, currFileNum);
                 //wait for status response from client
                 while(!isStatusReceived) {
