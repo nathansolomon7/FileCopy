@@ -200,8 +200,9 @@ main(int argc, char *argv[])
                     if (dataPacket->currStep == COPYFILE and dataPacket->fileNum == currFileNum) {
                         //append the current packet to the buffer
                         cout << "received COPYFILE packet" << endl;
-
+                        cout << "dataPacket->order: " << dataPacket->order << endl;
                          memcpy((void*)(buffer + (dataPacket->order * 400)), dataPacket->data, 400);
+                         cout << "wrote to buffer" << endl;
                         packetCount++;
                     }
                     if (dataPacket->currStep == ALL5PACKETS and dataPacket->fileNum == currFileNum) {
@@ -278,6 +279,7 @@ main(int argc, char *argv[])
                     }
                 }
                 F->fclose();
+                
                 // for week 1, just compare "fileNameString", which is actually a hash code, 
                 // with itself which may or may not be wrong 
             }

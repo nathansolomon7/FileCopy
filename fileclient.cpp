@@ -107,7 +107,7 @@ void checkAndPrintMessage(ssize_t readlen, char *buf, ssize_t bufferlen);
 void setUpDebugLogging(const char *logname, int argc, char *argv[]);
 void checkDirectory(char *dirname);
 bool compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket* sock, string fileName, int numRetry, dirent *sourceFile, int fileNum);
-void sendPacket(string data, Step currStep, int fileNum, C150DgmSocket* sock, int order, int dataSize);
+void sendPacket(char* data, Step currStep, int fileNum, C150DgmSocket* sock, int order, int dataSize);
 Packet makePacket(char* dataArr, Step currStep, int fileNum, int order, int dataSize);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -170,6 +170,8 @@ main(int argc, char *argv[]) {
     stringstream *sBuffer;
     char hashVal[20];
     string globalReadMessageString;
+    string sent5Packets = "sent 5 packets";
+    const char* sent5PacketsArr = sent5Packets.c_str();
     ///
     // FILE* f;
     char tmpFileOpenConfirmMsg[sizeof(struct Packet)];
@@ -249,7 +251,7 @@ main(int argc, char *argv[]) {
                 
                 bool isFileOpenConfirmReceived = false;
                 while (!isFileOpenConfirmReceived) {
-                    sendPacket(string(sourceFile->d_name), SENDFILENAME, currFileNum, sock, -1, -1);
+                    sendPacket(sourceFile->d_name, SENDFILENAME, currFileNum, sock, -1, -1);
                     sock->read(tmpFileOpenConfirmMsg, sizeof(struct Packet));
                     if(sock->timedout()) {
                         continue;
@@ -272,36 +274,46 @@ main(int argc, char *argv[]) {
                  string serverHashCode;
                 //  char tmpBuf[1];
                 char buffer[400];
-                char tmpBuf[] = "\0";
+                char tmpBuf[50];
                 int counter = 0;
                 //  int currPacketSize = 0;
-                 
+
                 while (!endOfFile) {
+                    int numCharsRead = 1;
                     // cout << "at start of endOfFile loop" << endl;
-                        while((F->fread(tmpBuf, 1, 1) != 0 and counter <= 2000)) {
-                            char prevChar = tmpBuf[0];
+                        while((counter <= 2000) and numCharsRead != 0) {
+                            numCharsRead = F->fread(tmpBuf, 1, 50); 
+                            if(numCharsRead == 0) {
+                                break;
+                            }
+                            // cout << "iseof: " << F->feof() << endl;
+                            // cout << "numCharsRead: " << numCharsRead << endl;
+                            // // cout << "tmpBuf: " << string(tmpBuf) << endl;
+                            // cout << "counter: " << counter << endl;
+                            string prevString = string(tmpBuf);
                             int numSameReads = 0;
 
                             while(numSameReads != 10) {
-                                F->fseek(-1, SEEK_CUR);
-                                F->fread(tmpBuf, 1, 1);
-                                if(prevChar == tmpBuf[0]) {
+                                F->fseek(numCharsRead * -1, SEEK_CUR);
+                                F->fread(tmpBuf, 1, numCharsRead);
+                                if(prevString == string(tmpBuf)) {
                                     numSameReads++;
                                 }
                                 else {
                                     numSameReads = 0;
                                 }
-                                prevChar = tmpBuf[0];
+                                prevString = string(tmpBuf);
                             }
-
-                            buffer[counter % 400] = tmpBuf[0];
+                            memcpy(buffer + counter % 400,tmpBuf, numCharsRead);
+                            // buffer[counter % 400] = tmpBuf[0];
                             // cout << "added char to buffer:" << endl;
-                            counter++;
+                            counter+=numCharsRead;
                             // cout << "counter: " << counter << endl;
                             // send a packet every 400 bytes
                             if ((counter % 400) == 0) {
                                 c150debug->printf(C150APPLICATION,"%s: sending SINGLE packets", argv[0]);
-                                sendPacket(string(buffer), COPYFILE, currFileNum, sock, (counter / 400) - 1, -1);
+                        
+                                sendPacket(buffer, COPYFILE, currFileNum, sock, (counter / 400) - 1, -1);
                                 // cout << "sent packet" << endl;
                                 // currPacketSize = 0;
                                 // cout << "post sending packet" << endl;
@@ -310,15 +322,16 @@ main(int argc, char *argv[]) {
                                     // cout << "SENT FIVE PACKETS" << endl;
                                     c150debug->printf(C150APPLICATION,"%s: sending 5 packets", argv[0]);
 
-                                    sendPacket("sent 5 packets", ALL5PACKETS, currFileNum, sock, -1, -1);
+                                    sendPacket((char*)sent5PacketsArr, ALL5PACKETS, currFileNum, sock, -1, -1);
                                     break;
                                 }
                             }
 
                             // lastFPosition = F->ftell();
                         }
-
-                    if(F->feof() != 0) {
+                       
+                    // cout << "is eof" << endl;
+                    if(numCharsRead == 0) {
                         endOfFile = true;
                         
                         c150debug->printf(C150APPLICATION,"%s: sending last end of file packet", argv[0]);
@@ -333,7 +346,7 @@ main(int argc, char *argv[]) {
                         c150debug->printf(C150APPLICATION, "counter: %d", counter);
                         int packetNum = ceil(counter / 400);
 
-                        sendPacket(string(buffer), ENDOFFILE, currFileNum, sock, packetNum, counter % 400);
+                        sendPacket(buffer, ENDOFFILE, currFileNum, sock, packetNum, counter % 400);
                     }
                     
                     bool receivedSend5Packets = false;
@@ -344,11 +357,11 @@ main(int argc, char *argv[]) {
                          if (sock -> timedout()) {
                             if (endOfFile) {
                                 // TODO:
-                                sendPacket(string(buffer), ENDOFFILE, currFileNum, sock, -1, counter % 400);
+                                sendPacket(buffer, ENDOFFILE, currFileNum, sock, -1, counter % 400);
 
                             } 
                             else {
-                                sendPacket("sent 5 packets", ALL5PACKETS, currFileNum, sock, -1, -1);
+                                sendPacket((char*)sent5PacketsArr, ALL5PACKETS, currFileNum, sock, -1, -1);
                             }
                             continue;
                          }
@@ -442,12 +455,13 @@ main(int argc, char *argv[]) {
         }
        // ending packet send here
         string sampleMsg = "ENDOFDIR";
-        sendPacket(sampleMsg, ENDOFDIR, 0, sock, -1, -1);
+        const char* sampleMsgArr = sampleMsg.c_str();
+        sendPacket((char*)sampleMsgArr, ENDOFDIR, 0, sock, -1, -1);
         bool isResetConfirmed = false;
         while(!isResetConfirmed) {
             readlen = sock -> read(tmpENDServerConfirmation, sizeof(struct Packet));
             if(sock -> timedout()) {
-                sendPacket(sampleMsg, ENDOFDIR, 0, sock, -1, -1);
+                sendPacket((char*)sampleMsg.c_str(), ENDOFDIR, 0, sock, -1, -1);
                 continue;
             }
             else {
@@ -500,7 +514,7 @@ bool compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket
         // *GRADING << "File: " << currFile << " end-to-end check succeeded, attempt " << numRetry << endl;
         c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", "fileclient", SUCCESS.c_str());
         string statusMessage = SUCCESS;
-        sendPacket(SUCCESS, SENDSTATUS, currFileNum, sock, -1, -1);
+        sendPacket((char*)SUCCESS.c_str(), SENDSTATUS, currFileNum, sock, -1, -1);
         return true;
     }
     else {
@@ -509,14 +523,14 @@ bool compareHashCodes(string clientHashCode, char* serverHashCode, C150DgmSocket
         // fileCheckResults << "!=" << endl;
         // *GRADING << "File: " << currFile << " end-to-end check failed, attempt " << numRetry << endl;
         c150debug->printf(C150APPLICATION,"%s: Writing message: \"%s\"", "fileclient", FAILURE.c_str());
-        sendPacket(FAILURE, SENDSTATUS, currFileNum, sock, -1, -1);
+        sendPacket((char*)FAILURE.c_str(), SENDSTATUS, currFileNum, sock, -1, -1);
         return false;
     }
      
 }
 
-void sendPacket(string data, Step currStep, int fileNum, C150DgmSocket* sock, int order, int dataSize) {
-        Packet newPacket = makePacket((char*)data.c_str(), currStep, fileNum, order, dataSize);
+void sendPacket(char* data, Step currStep, int fileNum, C150DgmSocket* sock, int order, int dataSize) {
+        Packet newPacket = makePacket((char*)data, currStep, fileNum, order, dataSize);
         char * newPacketArr = (char *)&newPacket;
         sock -> write(newPacketArr, sizeof(newPacket)); 
         // cout << "finished writing to socket" << endl;
