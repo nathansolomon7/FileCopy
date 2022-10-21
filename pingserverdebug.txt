@@ -1,0 +1,12 @@
+10/20/2022 00:04:22.447954 ./fileserver:     Creating C150NastyDgmSocket(nastiness=0)
+10/20/2022 00:04:25.234529 ./fileserver:     C150DgmSocket::read: successful read with len=416 |data1."...........................@........y^.....@y^.............@.....h...........................|
+10/20/2022 00:04:25.234556 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 416 |data1."...........................@........y^.....@y^.............@.....h...........................|
+10/20/2022 00:04:25.240081 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=416 |file data1.tmp has been opened...................@......0...................i....@......P...........|
+10/20/2022 00:04:25.240137 ./fileserver:     C150DgmSocket::write: Success writing packet with len=416 |file data1.tmp has been opened...................@......0...................i....@......P...........|
+10/20/2022 00:04:25.240416 ./fileserver:     C150DgmSocket::read: successful read with len=416 |     0      1      2      3      4      5      6      7        7      8      9 ..6...............@q.|
+10/20/2022 00:04:25.240437 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 416 |     0      1      2      3      4      5      6      7        7      8      9 ..6...............@q.|
+10/20/2022 00:04:25.243033 ./fileserver:     Responding with message="776c30a3cea7551c5fd6f6c120b3073b53059cea"
+10/20/2022 00:04:25.243056 ./fileserver:     C150DgmSocket::write: attempting to send packet with len=416 |776c30a3cea7551c5fd6f6c120b3073b53059cea...k0......i..8{...........i..8{...]]...................[...|
+10/20/2022 00:04:25.243092 ./fileserver:     C150DgmSocket::write: Success writing packet with len=416 |776c30a3cea7551c5fd6f6c120b3073b53059cea...k0......i..8{...........i..8{...]]...................[...|
+10/20/2022 00:04:25.243286 ./fileserver:     C150DgmSocket::read: successful read with len=416 |failure...r.....0.r.....d.......d.........@......................@q.....@.......)............... @q.|
+10/20/2022 00:04:25.243307 ./fileserver:     C150NastyDgmSocket::read: delivering packet of length 416 |failure...r.....0.r.....d.......d.........@......................@q.....@.......)............... @q.|
